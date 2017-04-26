@@ -85,6 +85,7 @@ function createSpotlights () {
     spotLight.fov = 40;
 
     plane.add(spotLight);
+  }
 }
 
 function initGame () {
@@ -128,7 +129,7 @@ function initGame () {
   createSpotlights();
   directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
   directionalLight.position.set(0, 1, 0);
-  hemisphereLight = new THREE.hemisphereLight(0xFFB74D, 0x37474F, 1);
+  hemisphereLight = new THREE.HemisphereLight(0xFFB74D, 0x37474F, 1);
   hemisphereLight.position.y = 500;
 
   scene.add(camera, directionalLight, hemisphereLight, plane);
