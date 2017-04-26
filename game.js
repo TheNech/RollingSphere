@@ -77,11 +77,11 @@ function createSpotlights () {
     spotLight = new THREE.SpotLight(0xFFFFFF, 2);
     spotLight.position.set(150, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5), -200);
     spotLight.castShadow = true;
-    spotLight.shadowCameraNear = 10;
+    spotLight.shadow.camera.near.shadowCameraNear = 10;
     spotLight.shadowCameraVisible = false;
     spotLight.target = target;
-    spotLight.shadowMapWidth = 2048;
-    spotLight.shadowMapHeight = 2048;
+    spotLight.shadow.mapSize.width.shadowMapWidth = 2048;
+    spotLight.shadow.mapSize.height.shadowMapHeight = 2048;
     spotLight.fov = 40;
 
     plane.add(spotLight);
