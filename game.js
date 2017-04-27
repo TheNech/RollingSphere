@@ -78,11 +78,14 @@ function createSpotlights () {
     spotLight.position.set(150, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5), -200);
     spotLight.castShadow = true;
     spotLight.shadow.camera.near.shadowCameraNear = 10;
-    spotLight.shadowCameraVisible = false;
+    //spotLight.shadowCameraVisible = false;
     spotLight.target = target;
     spotLight.shadow.mapSize.width.shadowMapWidth = 2048;
     spotLight.shadow.mapSize.height.shadowMapHeight = 2048;
     spotLight.fov = 40;
+
+    // var helper = new THREE.CameraHelper(spotLight.shadow.camera);
+    // scene.add(helper);
 
     plane.add(spotLight);
   }
@@ -109,10 +112,11 @@ function initGame () {
   camera = new THREE.PerspectiveCamera(45, containerWidth / containerHeight, 1, 3000);
   camera.position.set(0, PLANE_LENGTH / 125, PLANE_LENGTH / 2 + PLANE_LENGTH / 25);
 
-  control = new THREE.OrbitControls(camera, $container.get(0));
-  controls.noKeys = true;
-  controls.noPan = true;
-  controls.noZoom = true;
+  controls = new THREE.OrbitControls(camera, $container.get(0));
+  controls.enableKeys = false;
+  controls.enablePan = false;
+  controls.enableZoom = false;
+  controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
   controls.maxPolarAngle = 1.55;
   controls.minAzimuteAngle = 0;
