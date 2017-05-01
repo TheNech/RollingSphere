@@ -115,7 +115,7 @@ function initGame () {
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
   controls.enablePan = false;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
   controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
   controls.maxPolarAngle = 1.55;
@@ -123,12 +123,12 @@ function initGame () {
   controls.maxAzimuteAngle = 0;
 
   planeGeometry = new THREE.BoxGeometry(PLANE_WIDTH, PLANE_LENGTH + PLANE_LENGTH / 10, 1);
-  planeMaterial = new THREE.MeshLambertMaterial({color: 0x808080});
+  planeMaterial = new THREE.MeshBasicMaterial({color: 0x808080});
   plane = new THREE.Mesh(planeGeometry, planeMaterial);
   plane.rotation.x = 1.570;
   plane.receiveShadow = true;
 
-  createLandscapeFloors();
+  //createLandscapeFloors();
 
   createSpotlights();
   directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
