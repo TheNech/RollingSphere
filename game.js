@@ -1,5 +1,5 @@
 // размеры поля
-var PLANE_WIDTH = 50,
+var PLANE_WIDTH = 60,
     PLANE_LENGTH = 1000,
     PADDING = PLANE_WIDTH / 5 * 2;
 
@@ -17,8 +17,8 @@ var axishelper = {},
     plane = {},
     planeGeometry = {},
     planeMaterial = {},
-    powerup = {}, 
-    powerups = [],
+    barier = [], 
+    //bariers = [],
     powerupSpawnIntervalID = {},
     powerupCounterIntervalID = {},
     queue = {},
@@ -91,6 +91,73 @@ function createSpotlights () {
   }
 }
 
+function Barier (centerPos, zPos) {
+  var bar1 = {},
+      bar2 = {},
+      bar3 = {},
+      bar4 = {},
+      objectDimension = 0,
+      objectGeometry = {},
+      objectMaterial = {},
+      xPosition = 0,
+      xPositionValues = [],
+      yPosition = 0,
+      yPositionValues = [],
+      zPosition = 0,
+      zPositionValues = [],
+      setOfBariers = [];
+
+  objectDimension = 2;
+
+  xPositionValues = [centerPos - 7.5, centerPos - 2.5, centerPos + 2.5, centerPos + 7.5];
+  yPositionValues = [objectDimension];
+  zPositionValues = [-(PLANE_LENGTH - PADDING) / 2];
+
+  objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
+  objectMaterial = new THREE.MeshLambertMaterial({
+    color: 0x29B6F6, 
+    shading: THREE.FlatShading
+    });
+  
+  bar1 = new THREE.Mesh(objectGeometry, objectMaterial);
+  bar2 = new THREE.Mesh(objectGeometry, objectMaterial);
+  bar3 = new THREE.Mesh(objectGeometry, objectMaterial);
+  bar4 = new THREE.Mesh(objectGeometry, objectMaterial);
+
+  yPosition = 3;
+  zPosition = zPos;
+
+  bar1.castShadow = true;
+  bar1.receiveShadow = true;
+  bar2.castShadow = true;
+  bar2.receiveShadow = true;
+  bar3.castShadow = true;
+  bar3.receiveShadow = true;
+  bar4.castShadow = true;
+  bar4.receiveShadow = true;
+
+  xPosition = xPositionValues[0];
+  bar1.position.set(xPosition, yPosition, zPosition);
+
+  xPosition = xPositionValues[1];
+  bar2.position.set(xPosition, yPosition, zPosition);
+
+  xPosition = xPositionValues[2];
+  bar3.position.set(xPosition, yPosition, zPosition);
+
+  xPosition = xPositionValues[3];
+  bar4.position.set(xPosition, yPosition, zPosition);
+
+  scene.add(bar1, bar2, bar3, bar4);
+  //return {arr: setOfBariers};
+}
+
+function startBarierLogic () {
+  //Barier(-20, 500);
+  Barier(0, 500);
+  // Barier(20, 200);
+}
+
 function initGame () {
   THREE.ImageUtils.crossOrigin = '';
 
@@ -114,7 +181,7 @@ function initGame () {
 
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
-  controls.enablePan = false;
+  controls.enablePan = true;
   controls.enableZoom = true;
   controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
@@ -135,6 +202,8 @@ function initGame () {
   directionalLight.position.set(0, 1, 0);
   hemisphereLight = new THREE.HemisphereLight(0xFFB74D, 0x37474F, 1);
   hemisphereLight.position.y = 500;
+
+  startBarierLogic();
 
   scene.add(camera, directionalLight, hemisphereLight, plane);
 }
