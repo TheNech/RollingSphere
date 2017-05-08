@@ -40,6 +40,38 @@ function onWindowResize () {
   renderer.setSize(containerWidth, containerHeight);
 }
 
+function Hero () {
+  var hero = {},
+      heroGeometry = {},
+      heroMaterial = {};
+
+  heroGeometry = new THREE.SphereGeometry(2, 32, 32);
+  heroMaterial = new THREE.MeshNormalMaterial();
+  hero = new THREE.Mesh(heroGeometry, heroMaterial);
+  hero.castShadow = true;
+  hero.position.set(0, 5, (PLANE_LENGTH / 2));
+
+  window.addEventListener('keydown', function () {
+    if(event.keyCode === 37 && hero.position.x !== -(PLANE_WIDTH - PADDING) / 2) {
+      hero.position.x -= (PLANE_WIDTH - PADDING) / 2;
+    } else if(event.keyCode === 39 && hero.position.x !== (PLANE_WIDTH - PADDING) / 2) {
+      hero.position.x += (PLANE_WIDTH - PADDING) / 2;
+    }
+
+    if(event.keyCode === 65 && hero.position.x !== -(PLANE_WIDTH - PADDING) / 2) {
+      hero.position.x -= (PLANE_WIDTH - PADDING) / 2;
+    } else if(event.keyCode === 68 && hero.position.x !== (PLANE_WIDTH - PADDING) / 2) {
+      hero.position.x += (PLANE_WIDTH - PADDING) / 2;
+    }
+  });
+
+  return hero;
+}
+
+function detectCollisions(objects) {
+  
+}
+
 function createLandscapeFloors () {
   var planeLeft = {},
       planeLeftGeometry = {},
@@ -177,18 +209,18 @@ function initGame () {
   axishelper = new THREE.AxisHelper(PLANE_LENGTH / 2);
 
   camera = new THREE.PerspectiveCamera(45, containerWidth / containerHeight, 1, 3000);
-  camera.position.set(0, PLANE_LENGTH / 125, PLANE_LENGTH / 2 + PLANE_LENGTH / 25);
+  camera.position.set(0, PLANE_LENGTH / 100, PLANE_LENGTH / 2 + PLANE_LENGTH / 25);
 
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
-  controls.enablePan = true;
-  controls.enableZoom = true;
+  controls.enablePan = false;
+  controls.enableZoom = false;
   controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
   controls.maxPolarAngle = 1.55;
   controls.minAzimuteAngle = 0;
   controls.maxAzimuteAngle = 0;
-
+  
   planeGeometry = new THREE.BoxGeometry(PLANE_WIDTH, PLANE_LENGTH + PLANE_LENGTH / 10, 1);
   planeMaterial = new THREE.MeshBasicMaterial({color: 0x808080});
   plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -203,9 +235,12 @@ function initGame () {
   hemisphereLight = new THREE.HemisphereLight(0xFFB74D, 0x37474F, 1);
   hemisphereLight.position.y = 500;
 
-  startBarierLogic();
 
-  scene.add(camera, directionalLight, hemisphereLight, plane);
+  startBarierLogic();
+  hero = new Hero();
+
+  scene.add(camera, directionalLight, hemisphereLight, plane, hero)
+  
 }
 
 function runGame () {
