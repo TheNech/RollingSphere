@@ -180,14 +180,63 @@ function Barier (centerPos, zPos) {
   xPosition = xPositionValues[3];
   bar4.position.set(xPosition, yPosition, zPosition);
 
+  // setOfBariers.push(bar1, bar2, bar3, bar4);
+
   scene.add(bar1, bar2, bar3, bar4);
-  //return {arr: setOfBariers};
+  // scene.add(setOfBariers[0], setOfBariers[1], setOfBariers[2], setOfBariers[3]);
+  // return setOfBariers;
 }
 
+var Conuses = function() {
+  this.mesh = new THREE.Object3D();
+
+  var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6, shading: THREE.FlatShading});
+
+  //create 1st conus
+  var con1 = new THREE.Mesh(objectGeometry, objectMaterial);
+  con1.position.x = -7.5;
+  con1.castShadow = true;
+  con1.receiveShadow = true;
+  this.mesh.add(con1);
+
+  //create 2nd conus
+  var con2 = new THREE.Mesh(objectGeometry, objectMaterial);
+  con2.position.x = -2.5;
+  con2.castShadow = true;
+  con2.receiveShadow = true;
+  this.mesh.add(con2);
+
+  //create 3rd conus
+  var con3 = new THREE.Mesh(objectGeometry, objectMaterial);
+  con3.position.x = 2.5;
+  con3.castShadow = true;
+  con3.receiveShadow = true;
+  this.mesh.add(con3);
+
+  //create 4th conus
+  var con4 = new THREE.Mesh(objectGeometry, objectMaterial);
+  con4.position.x = 7.5;
+  con4.castShadow = true;
+  con4.receiveShadow = true;
+  this.mesh.add(con4);
+};
+
 function startBarierLogic () {
-  //Barier(-20, 500);
-  Barier(0, 500);
-  // Barier(20, 200);
+  // Barier(0, 500);
+
+  /*barier = [];
+  barier.push(Barier(0, 500));
+  console.log(Barier(0, 500));*/
+  // scene.add(Barier(0, 500));
+
+  var cons;
+
+  cons = new Conuses();
+  cons.mesh.position.y = 3;
+  cons.mesh.position.x = 20;
+  cons.mesh.position.z = 300;
+  scene.add(cons.mesh);
 }
 
 function initGame () {
@@ -240,7 +289,7 @@ function initGame () {
   hero = new Hero();
 
   scene.add(camera, directionalLight, hemisphereLight, plane, hero)
-  
+
 }
 
 function runGame () {
