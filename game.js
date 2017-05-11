@@ -29,9 +29,9 @@ var axishelper = {},
 function render () {
   globalRenderID = requestAnimationFrame(render);
   
-  // barier.forEach( function ( element, index ) {
-  //   barier[index].animate();
-  // });
+  barier.forEach( function ( element, index ) {
+      animateConuses(barier[index]);
+  });
 
 
 
@@ -124,153 +124,131 @@ function createSpotlights () {
   }
 }
 
-// function Barier (centerPos, zPos) {
-//   var bar1 = {},
-//       bar2 = {},
-//       bar3 = {},
-//       bar4 = {},
-//       objectDimension = 0,
-//       objectGeometry = {},
-//       objectMaterial = {},
-//       xPosition = 0,
-//       xPositionValues = [],
-//       yPosition = 0,
-//       yPositionValues = [],
-//       zPosition = 0,
-//       zPositionValues = [],
-//       setOfBariers = [];
+/*function Barier (centerPos, zPos) {
+  var bar1 = {},
+      bar2 = {},
+      bar3 = {},
+      bar4 = {},
+      objectDimension = 0,
+      objectGeometry = {},
+      objectMaterial = {},
+      xPosition = 0,
+      xPositionValues = [],
+      yPosition = 0,
+      yPositionValues = [],
+      zPosition = 0,
+      zPositionValues = [],
+      setOfBariers = [];
 
-//   objectDimension = 2;
+  objectDimension = 2;
 
-//   xPositionValues = [centerPos - 7.5, centerPos - 2.5, centerPos + 2.5, centerPos + 7.5];
-//   yPositionValues = [objectDimension];
-//   zPositionValues = [-(PLANE_LENGTH - PADDING) / 2];
+  xPositionValues = [centerPos - 7.5, centerPos - 2.5, centerPos + 2.5, centerPos + 7.5];
+  yPositionValues = [objectDimension];
+  zPositionValues = [-(PLANE_LENGTH - PADDING) / 2];
 
-//   objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
-//   objectMaterial = new THREE.MeshLambertMaterial({
-//     color: 0x29B6F6, 
-//     shading: THREE.FlatShading
-//     });
+  objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
+  objectMaterial = new THREE.MeshLambertMaterial({
+    color: 0x29B6F6, 
+    shading: THREE.FlatShading
+    });
   
-//   bar1 = new THREE.Mesh(objectGeometry, objectMaterial);
-//   bar2 = new THREE.Mesh(objectGeometry, objectMaterial);
-//   bar3 = new THREE.Mesh(objectGeometry, objectMaterial);
-//   bar4 = new THREE.Mesh(objectGeometry, objectMaterial);
+  bar1 = new THREE.Mesh(objectGeometry, objectMaterial);
+  bar2 = new THREE.Mesh(objectGeometry, objectMaterial);
+  bar3 = new THREE.Mesh(objectGeometry, objectMaterial);
+  bar4 = new THREE.Mesh(objectGeometry, objectMaterial);
 
-//   yPosition = 3;
-//   zPosition = zPos;
+  yPosition = 3;
+  zPosition = zPos;
 
-//   bar1.castShadow = true;
-//   bar1.receiveShadow = true;
-//   bar2.castShadow = true;
-//   bar2.receiveShadow = true;
-//   bar3.castShadow = true;
-//   bar3.receiveShadow = true;
-//   bar4.castShadow = true;
-//   bar4.receiveShadow = true;
+  bar1.castShadow = true;
+  bar1.receiveShadow = true;
+  bar2.castShadow = true;
+  bar2.receiveShadow = true;
+  bar3.castShadow = true;
+  bar3.receiveShadow = true;
+  bar4.castShadow = true;
+  bar4.receiveShadow = true;
 
-//   xPosition = xPositionValues[0];
-//   bar1.position.set(xPosition, yPosition, zPosition);
+  xPosition = xPositionValues[0];
+  bar1.position.set(xPosition, yPosition, zPosition);
 
-//   xPosition = xPositionValues[1];
-//   bar2.position.set(xPosition, yPosition, zPosition);
+  xPosition = xPositionValues[1];
+  bar2.position.set(xPosition, yPosition, zPosition);
 
-//   xPosition = xPositionValues[2];
-//   bar3.position.set(xPosition, yPosition, zPosition);
+  xPosition = xPositionValues[2];
+  bar3.position.set(xPosition, yPosition, zPosition);
 
-//   xPosition = xPositionValues[3];
-//   bar4.position.set(xPosition, yPosition, zPosition);
+  xPosition = xPositionValues[3];
+  bar4.position.set(xPosition, yPosition, zPosition);
 
-//   // setOfBariers.push(bar1, bar2, bar3, bar4);
+  // setOfBariers.push(bar1, bar2, bar3, bar4);
 
-//   scene.add(bar1, bar2, bar3, bar4);
-//   // scene.add(setOfBariers[0], setOfBariers[1], setOfBariers[2], setOfBariers[3]);
-//   // return setOfBariers;
-// }
+  scene.add(bar1, bar2, bar3, bar4);
+  // scene.add(setOfBariers[0], setOfBariers[1], setOfBariers[2], setOfBariers[3]);
+  // return setOfBariers;
+}*/
 
 var Conuses = function () {
-  var cons,
-      centerPosition = [],
-      xPosition = 0;
 
   this.mesh = new THREE.Object3D();
-
-  centerPosition = [-20, 0, 20]; 
-  xPosition = centerPosition[getRandomInteger(0, centerPosition.length - 1)];  
   
   this.mesh.position.y = 3;
-  this.mesh.position.z = 400/*-(PLANE_LENGTH - PADDING) / 2*/;
+  this.mesh.position.z = 400/*PLANE_LENGTH / 2*/;
 
   var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
   var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6, shading: THREE.FlatShading});
 
   //create 1st conus
   var con1 = new THREE.Mesh(objectGeometry, objectMaterial);
-  con1.position.x = xPosition - 7.5;
+  con1.position.x = - 7.5;
   con1.castShadow = true;
   con1.receiveShadow = true;
   this.mesh.add(con1);
 
   //create 2nd conus
   var con2 = new THREE.Mesh(objectGeometry, objectMaterial);
-  con2.position.x = xPosition - 2.5;
+  con2.position.x = - 2.5;
   con2.castShadow = true;
   con2.receiveShadow = true;
   this.mesh.add(con2);
 
   //create 3rd conus
   var con3 = new THREE.Mesh(objectGeometry, objectMaterial);
-  con3.position.x = xPosition + 2.5;
+  con3.position.x = 2.5;
   con3.castShadow = true;
   con3.receiveShadow = true;
   this.mesh.add(con3);
 
   //create 4th conus
   var con4 = new THREE.Mesh(objectGeometry, objectMaterial);
-  con4.position.x = xPosition + 7.5;
+  con4.position.x = 7.5;
   con4.castShadow = true;
   con4.receiveShadow = true;
   this.mesh.add(con4);
-
-  // this.cons.animate = function () {
-  //   if(this.mesh.position.z < PLANE_LENGTH / 2 + PLANE_LENGTH / 10){
-  //     this.mesh.position.z += 10;
-  //   } else {
-  //     this.mesh.position.x = centerPosition[getRandomInteger(0, centerPosition.length - 1)];
-  //     this.mesh.position.z = -PLANE_LENGTH / 2;
-  //   }
-  // }
-  // this.mesh.animate = () => {
-
-  // }
 };
 
 function getRandomInteger( min, max ) {
   return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 }
 
+function animateConuses(conus) {
+  conus.position.z += 5;
+  if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
+    barier.shift();
+}
 function startBarierLogic () {
-  // Barier(0, 500);
-
-  /*barier = [];
-  barier.push(Barier(0, 500));
-  console.log(Barier(0, 500));*/
-  // scene.add(Barier(0, 500));   
-
-  powerupSpawnIntervalID = window.setInterval(function () {
-      if(barier.length < BARIERS_COUNT) {
-          cons = new Conuses();
-          barier.push(cons.mesh);
-          scene.add(cons.mesh);
-          // console.log(barier.length);      
-      }
-  }, 2000);
   
-  powerupCounterIntervalID = window.setInterval(function () {
-    BARIERS_COUNT++;
-    // console.log('Bariers' + BARIERS_COUNT);
-  }, 5000);
-  // scene.add(cons.mesh);
+  powerupSpawnIntervalID = window.setInterval(function() {
+    if(barier.length < BARIERS_COUNT) {
+      var cons;
+      cons = new Conuses();
+      cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
+      cons.mesh.position.z = -(PLANE_LENGTH / 2);
+      barier.push(cons.mesh);
+      scene.add(cons.mesh);
+    }
+  }, 2000)
+
 }
 
 function initGame () {
