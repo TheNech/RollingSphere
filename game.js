@@ -14,6 +14,7 @@ var axishelper = {},
     directionalLight = {},
     globalRenderID = {},
     hero = {},
+    heroCubeMesh = {},
     hemisphereLight = {},
     plane = {},
     planeGeometry = {},
@@ -32,8 +33,6 @@ function render () {
   barier.forEach( function ( element, index ) {
       animateConuses(barier[index]);
   });
-
-
 
   renderer.render(scene, camera);
 }
@@ -56,21 +55,17 @@ function Hero () {
   heroMaterial = new THREE.MeshNormalMaterial();
   hero = new THREE.Mesh(heroGeometry, heroMaterial);
   hero.castShadow = true;
-  hero.position.set(0, 5, (PLANE_LENGTH / 2));
+  hero.position.set(0, 3, (PLANE_LENGTH / 2));
 
   window.addEventListener('keydown', function () {
-    if((event.keyCode === 65 || event.keyCode === 37) && hero.position.x !== -(PLANE_WIDTH - PADDING) / 2) {
-      hero.position.x -= (PLANE_WIDTH - PADDING) / 2;
-    } else if((event.keyCode === 68 || event.keyCode === 39) && hero.position.x !== (PLANE_WIDTH - PADDING) / 2) {
-      hero.position.x += (PLANE_WIDTH - PADDING) / 2;
+    if((event.keyCode === 65 || event.keyCode === 37) && hero.position.x !== -20) {
+      hero.position.x -= 20;
+    } else if((event.keyCode === 68 || event.keyCode === 39) && hero.position.x !== 20) {
+      hero.position.x += 20;
     }
   });
 
   return hero;
-}
-
-function detectCollisions(objects) {
-  
 }
 
 function createLandscapeFloors () {
@@ -124,76 +119,12 @@ function createSpotlights () {
   }
 }
 
-/*function Barier (centerPos, zPos) {
-  var bar1 = {},
-      bar2 = {},
-      bar3 = {},
-      bar4 = {},
-      objectDimension = 0,
-      objectGeometry = {},
-      objectMaterial = {},
-      xPosition = 0,
-      xPositionValues = [],
-      yPosition = 0,
-      yPositionValues = [],
-      zPosition = 0,
-      zPositionValues = [],
-      setOfBariers = [];
-
-  objectDimension = 2;
-
-  xPositionValues = [centerPos - 7.5, centerPos - 2.5, centerPos + 2.5, centerPos + 7.5];
-  yPositionValues = [objectDimension];
-  zPositionValues = [-(PLANE_LENGTH - PADDING) / 2];
-
-  objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
-  objectMaterial = new THREE.MeshLambertMaterial({
-    color: 0x29B6F6, 
-    shading: THREE.FlatShading
-    });
-  
-  bar1 = new THREE.Mesh(objectGeometry, objectMaterial);
-  bar2 = new THREE.Mesh(objectGeometry, objectMaterial);
-  bar3 = new THREE.Mesh(objectGeometry, objectMaterial);
-  bar4 = new THREE.Mesh(objectGeometry, objectMaterial);
-
-  yPosition = 3;
-  zPosition = zPos;
-
-  bar1.castShadow = true;
-  bar1.receiveShadow = true;
-  bar2.castShadow = true;
-  bar2.receiveShadow = true;
-  bar3.castShadow = true;
-  bar3.receiveShadow = true;
-  bar4.castShadow = true;
-  bar4.receiveShadow = true;
-
-  xPosition = xPositionValues[0];
-  bar1.position.set(xPosition, yPosition, zPosition);
-
-  xPosition = xPositionValues[1];
-  bar2.position.set(xPosition, yPosition, zPosition);
-
-  xPosition = xPositionValues[2];
-  bar3.position.set(xPosition, yPosition, zPosition);
-
-  xPosition = xPositionValues[3];
-  bar4.position.set(xPosition, yPosition, zPosition);
-
-  // setOfBariers.push(bar1, bar2, bar3, bar4);
-
-  scene.add(bar1, bar2, bar3, bar4);
-  // scene.add(setOfBariers[0], setOfBariers[1], setOfBariers[2], setOfBariers[3]);
-  // return setOfBariers;
-}*/
-
 var Conuses = function () {
 
   this.mesh = new THREE.Object3D();
   
   this.mesh.position.y = 3;
-  this.mesh.position.z = 400/*PLANE_LENGTH / 2*/;
+  this.mesh.position.z = PLANE_LENGTH / 2;
 
   var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
   var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6, shading: THREE.FlatShading});
@@ -233,9 +164,13 @@ function getRandomInteger( min, max ) {
 
 function animateConuses(conus) {
   conus.position.z += 5;
+  if(conus.position.z == hero.position.z && conus.position.x == hero.position.x) {
+    console.log('столкновение');
+  }
   if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
     barier.shift();
 }
+
 function startBarierLogic () {
   
   powerupSpawnIntervalID = window.setInterval(function() {
@@ -270,7 +205,7 @@ function initGame () {
   axishelper = new THREE.AxisHelper(PLANE_LENGTH / 2);
 
   camera = new THREE.PerspectiveCamera(45, containerWidth / containerHeight, 1, 3000);
-  camera.position.set(0, PLANE_LENGTH / 100, PLANE_LENGTH / 2 + PLANE_LENGTH / 25);
+  camera.position.set(0, PLANE_LENGTH / 100, PLANE_LENGTH / 2 + PLANE_LENGTH / 20);
 
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
