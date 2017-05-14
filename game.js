@@ -245,8 +245,9 @@ function startBarierLogic () {
       cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
       cons.mesh.position.z = -(PLANE_LENGTH / 2);
       barier.push(cons.mesh);
-      scene.add(cons.mesh);
+      scene.add(cons.mesh, cons.mesh);
     }
+    console.log(barier.length);
   }, 2000)
 
 }
