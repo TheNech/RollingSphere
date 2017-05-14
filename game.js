@@ -14,7 +14,6 @@ var axishelper = {},
     directionalLight = {},
     globalRenderID = {},
     hero = {},
-    heroCubeMesh = {},
     hemisphereLight = {},
     plane = {},
     planeGeometry = {},
@@ -33,8 +32,26 @@ function render () {
   barier.forEach( function ( element, index ) {
       animateConuses(barier[index]);
   });
-
+  console.log(barier.length);
   renderer.render(scene, camera);
+}
+
+function gameOver () {
+  cancelAnimationFrame(globalRenderID);
+  window.clearInterval(powerupSpawnIntervalID);
+
+  $('#overlay-gameover').fadeIn(100);
+
+  $('#btn-restart').one('click', function () {
+    $('#overlay-gameover').fadeOut(50);
+    barier.forEach(function (element, index) {
+      scene.remove(barier[index]);
+    });
+    barier = [];
+    hero.position.x = 0;
+    render();
+    startBarierLogic();
+  });
 }
 
 function onWindowResize () {
@@ -124,7 +141,7 @@ var Conuses = function () {
   this.mesh = new THREE.Object3D();
   
   this.mesh.position.y = 3;
-  this.mesh.position.z = PLANE_LENGTH / 2;
+  this.mesh.position.z = -PLANE_LENGTH / 2;
 
   var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
   var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6, shading: THREE.FlatShading});
@@ -165,7 +182,8 @@ function getRandomInteger( min, max ) {
 function animateConuses(conus) {
   conus.position.z += 5;
   if(conus.position.z == hero.position.z && conus.position.x == hero.position.x) {
-    console.log('столкновение');
+    //console.log('столкновение');
+    gameOver();
   }
   if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
     barier.shift();
@@ -178,7 +196,6 @@ function startBarierLogic () {
       var cons;
       cons = new Conuses();
       cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
-      cons.mesh.position.z = -(PLANE_LENGTH / 2);
       barier.push(cons.mesh);
       scene.add(cons.mesh);
     }
