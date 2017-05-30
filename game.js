@@ -51,6 +51,7 @@ function gameOver () {
   window.clearInterval(powerupSpeedCounterIntervalID);
 
   $('#overlay-gameover').fadeIn(100);
+  $('.message-container p:nth-child(2)').text("Score: " + Math.floor(SCORE / 100));
 
   $('#btn-restart').one('click', function () {
     $('#overlay-gameover').fadeOut(50);
@@ -196,12 +197,14 @@ function animateConuses(conus) {
   if(conus.position.z == hero.position.z && conus.position.x == hero.position.x) {
     //console.log('столкновение');
     gameOver();
+    return;
   }
   if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
     barier.shift();
 
-  // SCORE += SPEED;
-  //     $('#score p').text("Score: " + Math.floor(SCORE / 10));
+  SCORE += SPEED;
+
+  $('#score p').text("Score: " + Math.floor(SCORE / 100));
 }
 
 function animateTwoConuses(conus1, conus2) {

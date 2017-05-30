@@ -47,10 +47,15 @@
 			left: 0;
 		}
 
-		.message-container p {
-				color: #ffffff;
-				font-size: 80px;
-				margin-top: 300px;
+		.message-container p:nth-child(1) {
+			color: #ffffff;
+			font-size: 80px;
+			margin-top: 300px;
+			margin-bottom: 50px;
+		}
+		.message-container p:nth-child(2) {
+			color: #ffffff;
+			font-size: 40px;	
 		}
 		.message-container	button {
 			color: green;
@@ -86,6 +91,7 @@
 	<div id ="overlay-gameover">
 		<div class="message-container">
 			<p>Game over!</p>
+			<p>Score: </p>
 			<button id="btn-restart">Play again</button>
 		</div>
 	</div>
