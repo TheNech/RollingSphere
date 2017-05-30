@@ -325,8 +325,15 @@ function runGame () {
 }
 
 $('#overlay-start').fadeIn(100);
-$('#btn-start').one('click', function () {
+// $('#btn-start').one('click', function () {
+//     $('#overlay-start').fadeOut(50);
+//     initGame();
+//     runGame();
+//   });
+window.addEventListener('keydown', function () {
+  if(event.keyCode === 32) {
     $('#overlay-start').fadeOut(50);
     initGame();
     runGame();
-  });
+  }
+})

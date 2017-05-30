@@ -85,12 +85,23 @@
 			font-size: 2em;
 			margin: 0;
 		}
-		#start-screen p {
+		#start-screen p:nth-child(1) {
 			color: #ffffff;
 			font-size: 80px;
-			position: absolute;
-			left: 33%;
-			top: 20%;
+			/*position: absolute;*/
+			/*left: 33%;
+ 			top: 20%;*/
+ 			margin-top: 150px;
+ 			/*margin-bottom: 50px;*/
+		}
+		#start-screen p:nth-child(2) {
+			color: #ffffff;
+			font-size: 50px;
+			/*position: absolute;*/
+			/*left: 33%;
+ 			top: 20%;*/
+ 			margin-top: 0px;
+ 			/*margin-bottom: 50px;*/
 		}
 		#btn-start {
 			color: green;
@@ -99,7 +110,7 @@
 			border: 2px solid green;
 			border-radius: 50%;
 			cursor: pointer;
-			margin-top: 30%;
+			margin-top: 20px;
 			padding: 10px 40px;
 		}
 		#btn-start:hover {
@@ -125,7 +136,8 @@
 	<div id="overlay-start">
 		<div id="start-screen">
 			<p>Rolling Sphere</p>
-			<button id="btn-start">Start game</button>
+			<!-- <button id="btn-start">Start game</button> -->
+			<P>Press "Space" to start</P>
 		</div>
 	</div>
 	
