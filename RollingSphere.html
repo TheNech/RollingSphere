@@ -62,12 +62,23 @@
 			margin-top: 20px;
 			padding: 10px 40px;
 		}
-		/*.message-container button:hover {}*/
+		.message-container button:hover {
+			color: #00FF00;
+			border-color: #00FF00;
+		}
 
 		.message-container button:focus {
 			outline: 0;
 		}
-		
+		#score {
+			position: absolute;
+			top: 0%;
+			left: 75%;
+		}
+		#score p {
+			font-size: 2em;
+			margin: 0;
+		}
 	</style>
 </head>
 <body>
@@ -78,6 +89,7 @@
 			<button id="btn-restart">Play again</button>
 		</div>
 	</div>
+	<div id="score"><p>Score: </p></div>
 	<script type="text/javascript" src="game.js"></script>
 </body>
 </html>

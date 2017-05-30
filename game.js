@@ -1,8 +1,12 @@
 // размеры поля
 var PLANE_WIDTH = 60,
     PLANE_LENGTH = 1000,
-    PADDING = PLANE_WIDTH / 5 * 2;
-    BARIERS_COUNT = 10;
+    PADDING = PLANE_WIDTH / 5 * 2,
+    BARIERS_COUNT = 10,
+    SPEED = 10,
+    INTERVAL = 1000,
+    INTERVAL_COUNT = 0,
+    SCORE = 0;
 
 //переменные
 var axishelper = {},
@@ -22,6 +26,7 @@ var axishelper = {},
     // bariers = [],
     powerupSpawnIntervalID = {},
     powerupCounterIntervalID = {},
+    powerupSpeedCounterIntervalID = {},
     queue = {},
     renderer = {},
     scene = {};
@@ -30,15 +35,20 @@ function render () {
   globalRenderID = requestAnimationFrame(render);
   
   barier.forEach( function ( element, index ) {
+      // if(barier[index + 1] && barier[index].position.z == barier[index + 1].position.z) {
+      //   animateTwoConuses(barier[index], barier[index + 1]);
+      //   index++;
+      // } else 
       animateConuses(barier[index]);
   });
-  console.log(barier.length);
+  //console.log(barier.length);
   renderer.render(scene, camera);
 }
 
 function gameOver () {
   cancelAnimationFrame(globalRenderID);
   window.clearInterval(powerupSpawnIntervalID);
+  window.clearInterval(powerupSpeedCounterIntervalID);
 
   $('#overlay-gameover').fadeIn(100);
 
@@ -50,6 +60,8 @@ function gameOver () {
     barier = [];
     hero.position.x = 0;
     render();
+    INTERVAL = 1000;
+    SCORE = 0;
     startBarierLogic();
   });
 }
@@ -180,28 +192,72 @@ function getRandomInteger( min, max ) {
 }
 
 function animateConuses(conus) {
-  conus.position.z += 5;
+  conus.position.z += SPEED;
   if(conus.position.z == hero.position.z && conus.position.x == hero.position.x) {
     //console.log('столкновение');
     gameOver();
   }
   if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
     barier.shift();
+
+  // SCORE += SPEED;
+  //     $('#score p').text("Score: " + Math.floor(SCORE / 10));
 }
 
-function startBarierLogic () {
-  
-  powerupSpawnIntervalID = window.setInterval(function() {
-    if(barier.length < BARIERS_COUNT) {
+function animateTwoConuses(conus1, conus2) {
+  conus1.position.z += SPEED;
+  conus2.position.z += SPEED;
+  if(conus1.position.z == hero.position.z && (conus1.position.x == hero.position.x || conus2.position.x == hero.position.x))
+      gameOver();
+  if(conus1.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
+    barier.shift();
+    barier.shift();
+  }
+}
+
+function conusesGenerate() {
+  if(getRandomInteger(1, 2) === 1) {
       var cons;
       cons = new Conuses();
       cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
       barier.push(cons.mesh);
-      scene.add(cons.mesh, cons.mesh);
-    }
-    console.log(barier.length);
-  }, 2000)
+      scene.add(cons.mesh);
+    } else {
+      var barPos = [-1, 0, 1];
+      var pos = getRandomInteger(0, barPos.length - 1);
+      var con1;
+      con1 = new Conuses();
+      con1.mesh.position.x = 20 * barPos[pos];
+      barier.push(con1.mesh);
+      barPos.splice(pos, 1);
 
+      pos = getRandomInteger(0, barPos.length - 1);
+      var con2;
+      con2 = new Conuses();
+      con2.mesh.position.x = 20 * barPos[pos];
+      barier.push(con2.mesh);
+
+      scene.add(con1.mesh, con2.mesh);
+
+
+      }
+    //console.log(barier.length);
+}
+function startBarierLogic () {
+  //var period = 1000;
+  powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
+
+  //window.clearInterval(powerupSpawnIntervalID);
+
+  powerupSpeedCounterIntervalID = window.setInterval(function() {
+    if(INTERVAL > 500){
+      INTERVAL -= 100;
+      window.clearInterval(powerupSpawnIntervalID);
+      console.log(INTERVAL);
+      powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
+    }          
+    
+  }, 5000);
 }
 
 function initGame () {
