@@ -29,7 +29,8 @@ var axishelper = {},
     powerupSpeedCounterIntervalID = {},
     queue = {},
     renderer = {},
-    scene = {};
+    scene = {},
+    space = true;
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
@@ -331,7 +332,8 @@ $('#overlay-start').fadeIn(100);
 //     runGame();
 //   });
 window.addEventListener('keydown', function () {
-  if(event.keyCode === 32) {
+  if(event.keyCode === 32 && space) {
+    space = false;
     $('#overlay-start').fadeOut(50);
     initGame();
     runGame();
