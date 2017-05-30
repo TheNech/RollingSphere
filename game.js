@@ -52,6 +52,7 @@ function gameOver () {
 
   $('#overlay-gameover').fadeIn(100);
   $('.message-container p:nth-child(2)').text("Score: " + Math.floor(SCORE / 100));
+  $('#score p').fadeOut(50);
 
   $('#btn-restart').one('click', function () {
     $('#overlay-gameover').fadeOut(50);
