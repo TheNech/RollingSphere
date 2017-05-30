@@ -64,6 +64,8 @@ function gameOver () {
     render();
     INTERVAL = 1000;
     SCORE = 0;
+    $('#score p').text("Score: " + SCORE);
+    $('#score p').fadeIn(50);
     startBarierLogic();
   });
 }
