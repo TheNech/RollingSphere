@@ -3,133 +3,13 @@
 <head>
 	<meta charset="utf-8">
 	<title>Rolling Sphere</title>
-	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
-	<script type="text/javascript" src="preloadjs.js"></script>
-	<script type="text/javascript" src="three.js"></script>
-	<script type="text/javascript" src="OrbitControls.js"></script>
-	<script type="text/javascript" src="ColladaLoader.js"></script>
+	<script type="text/javascript" src="./lib/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="./lib/preloadjs.js"></script>
+	<script type="text/javascript" src="./lib/three.js"></script>
+	<script type="text/javascript" src="./lib/OrbitControls.js"></script>
+	<script type="text/javascript" src="./lib/ColladaLoader.js"></script>
 
-	<style type="text/css">
-		html,
-		body,
-		#container,
-		#overlay-gameover {
-			background-color: #000000;
-			/*font-family: */
-			font-weight: 700;
-			overflow: hidden;
-			position: relative;
-			width: 100%;
-			height: 100%;
-		}
-
-		body {
-			margin: 0px;
-		}
-
-		#container,
-		.message-container {
-			margin-top: -384px;
-			margin-left: -512px;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			width: 1024px;
-			height: 768px;
-		}
-
-		#overlay-gameover,
-		#overlay-start {
-			text-align: center;
-			background-color: rgba(0, 0, 0, 0.875);
-			display: none;
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-
-		.message-container p:nth-child(1) {
-			color: #ffffff;
-			font-size: 80px;
-			margin-top: 300px;
-			margin-bottom: 50px;
-		}
-		.message-container p:nth-child(2) {
-			color: #ffffff;
-			font-size: 40px;	
-		}
-		.message-container	button {
-			color: green;
-			font-size: 30px;
-			background-color: transparent;
-			border: 2px solid green;
-			border-radius: 10px;
-			cursor: pointer;
-			margin-top: 20px;
-			padding: 10px 40px;
-		}
-		.message-container button:hover {
-			color: #00FF00;
-			border-color: #00FF00;
-		}
-
-		.message-container button:focus {
-			outline: 0;
-		}
-		#score {
-			position: absolute;
-			top: 0%;
-			left: 75%;
-		}
-		#score p {
-			font-size: 2em;
-			margin: 0;
-		}
-		#start-screen p:nth-child(1) {
-			color: #ffffff;
-			font-size: 80px;
-			/*position: absolute;*/
-			/*left: 33%;
- 			top: 20%;*/
- 			margin-top: 150px;
- 			/*margin-bottom: 50px;*/
-		}
-		#start-screen p:nth-child(2) {
-			color: #ffffff;
-			font-size: 50px;
-			/*position: absolute;*/
-			/*left: 33%;
- 			top: 20%;*/
- 			margin-top: 0px;
- 			/*margin-bottom: 50px;*/
-		}
-		#btn-start {
-			color: green;
-			font-size: 30px;
-			background-color: transparent;
-			border: 2px solid green;
-			border-radius: 50%;
-			cursor: pointer;
-			margin-top: 20px;
-			padding: 10px 40px;
-		}
-		#btn-start:hover {
-			color: #00FF00;
-			border-color: #00FF00;
-		}
-		#btn-start:focus {
-			outline: 0;
-		}
-		#overlay-start {
-			background-color: #000000;
-			/*font-family: */
-			font-weight: 700;
-			overflow: hidden;
-			position: relative;
-			width: 100%;
-			height: 100%;
-		}
-	</style>
+	<link href="./css/style.css" rel="stylesheet">
 </head>
 <body>
 	<div id="container"></div>
@@ -137,7 +17,7 @@
 		<div id="start-screen">
 			<p>Rolling Sphere</p>
 			<!-- <button id="btn-start">Start game</button> -->
-			<P>Press "Space" to start</P>
+			<P>Press space to start...</P>
 		</div>
 	</div>
 	
@@ -149,6 +29,6 @@
 		</div>
 	</div>
 	<div id="score"><p>Score: 0</p></div>
-	<script type="text/javascript" src="game.js"></script>
+	<script type="text/javascript" src="./js/game.js"></script>
 </body>
 </html>

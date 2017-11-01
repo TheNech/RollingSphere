@@ -257,7 +257,7 @@ function startBarierLogic () {
   //window.clearInterval(powerupSpawnIntervalID);
 
   powerupSpeedCounterIntervalID = window.setInterval(function() {
-    if(INTERVAL > 500){
+    if(INTERVAL > 400){
       INTERVAL -= 100;
       window.clearInterval(powerupSpawnIntervalID);
       console.log(INTERVAL);
