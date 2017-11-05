@@ -157,8 +157,8 @@ var Conuses = function () {
 
   this.mesh = new THREE.Object3D();
   
-  this.mesh.position.y = 3;
-  this.mesh.position.z = -PLANE_LENGTH / 2;
+  // this.mesh.position.y = 3;
+  // this.mesh.position.z = -PLANE_LENGTH / 2;
 
   var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
   var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6, shading: THREE.FlatShading});
@@ -196,11 +196,16 @@ function getRandomInteger( min, max ) {
   return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 }
 
-function animateConuses(conus) {
+function animateConuses(conus) { 
   conus.position.z += SPEED;
-  if(conus.position.z == hero.position.z && conus.position.x == hero.position.x) {
+  if(conus.position.z == hero.position.z) {
     //console.log('столкновение');
-    gameOver();
+
+    conus.children.forEach(function (element, index) {
+      if(conus.children[index].position.x == hero.position.x)
+        gameOver();
+    });
+
     return;
   }
   if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
@@ -222,33 +227,46 @@ function animateTwoConuses(conus1, conus2) {
   }
 }
 
+var boxConuses = function (number) {
+  this.mesh = new THREE.Object3D();
+  this.mesh.position.y = 3;
+  this.mesh.position.z = -PLANE_LENGTH / 2;
+  this.mesh.position.x = 0;
+
+  if(number === 1) {
+    var cons;
+    cons = new Conuses();
+    cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
+    this.mesh.add(cons.mesh);
+  }
+  if(number === 2) {
+    var barPos = [-1, 0, 1];
+    var pos = getRandomInteger(0, barPos.length - 1);
+    var con1;
+    con1 = new Conuses();
+    con1.mesh.position.x = 20 * barPos[pos];
+    this.mesh.add(con1.mesh);
+    barPos.splice(pos, 1);
+
+    pos = getRandomInteger(0, barPos.length - 1);
+    var con2;
+    con2 = new Conuses();
+    con2.mesh.position.x = 20 * barPos[pos];
+    this.mesh.add(con2.mesh);
+  }
+}
+
 function conusesGenerate() {
   if(getRandomInteger(1, 2) === 1) {
-      var cons;
-      cons = new Conuses();
-      cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
-      barier.push(cons.mesh);
-      scene.add(cons.mesh);
-    } else {
-      var barPos = [-1, 0, 1];
-      var pos = getRandomInteger(0, barPos.length - 1);
-      var con1;
-      con1 = new Conuses();
-      con1.mesh.position.x = 20 * barPos[pos];
-      barier.push(con1.mesh);
-      barPos.splice(pos, 1);
-
-      pos = getRandomInteger(0, barPos.length - 1);
-      var con2;
-      con2 = new Conuses();
-      con2.mesh.position.x = 20 * barPos[pos];
-      barier.push(con2.mesh);
-
-      scene.add(con1.mesh, con2.mesh);
-
-
-      }
-    //console.log(barier.length);
+    var box = new boxConuses(1);
+    barier.push(box.mesh);
+    scene.add(box.mesh);
+  } 
+  else {
+    var box = new boxConuses(2);
+    barier.push(box.mesh);
+    scene.add(box.mesh);
+  }
 }
 function startBarierLogic () {
   //var period = 1000;
