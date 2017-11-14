@@ -1,5 +1,5 @@
 {
-  "name": "rollingsphere",
+  "name": "rolling-sphere",
   "version": "1.0.0",
   "description": "Rolling Sphere Brawser Game",
   "main": "index.js",
@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/TheNech/RollingSphere/issues"
   },
-  "homepage": "https://github.com/TheNech/RollingSphere#readme"
+  "homepage": "https://github.com/TheNech/RollingSphere#readme",
+  "dependencies": {
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4"
+  }
 }
