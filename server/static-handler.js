@@ -5,15 +5,27 @@ module.exports = (request, response) => {
 
     switch (request.url) {
         case '/':
-            path = __dirname + "/../www/index.html";
+            path = __dirname + '/../www/index.html';
             break;
 
-        case '/socket.io.js':
-            path = __dirname + "/../node_modules/socket.io-client/dist/socket.io.js";
+        case '/lib/jquery.min.js':
+            path = __dirname + '/../node_modules/jquery/dist/jquery.min.js';
+            break;
+
+        case '/lib/socket.io.js':
+            path = __dirname + '/../node_modules/socket.io-client/dist/socket.io.js';
+            break;
+
+        case '/lib/three.min.js':
+            path = __dirname + '/../node_modules/three/build/three.min.js';
+            break;
+
+        case '/lib/OrbitControls.js':
+            path = __dirname + '/../node_modules/three/examples/js/controls/OrbitControls.js';
             break;
 
         default :
-            path = __dirname + "/../www" + request.url;
+            path = __dirname + '/../www' + request.url;
             break;
     }
 
