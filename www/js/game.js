@@ -89,7 +89,7 @@ function Hero () {
   heroMaterial = new THREE.MeshNormalMaterial();
   hero = new THREE.Mesh(heroGeometry, heroMaterial);
   hero.castShadow = true;
-  hero.position.set(0, 3, (PLANE_LENGTH / 2));
+  hero.position.set(0, 3, (PLANE_LENGTH / 2 + 2));
 
   window.addEventListener('keydown', function () {
     if((event.keyCode === 65 || event.keyCode === 37) && hero.position.x !== -20) {
@@ -198,7 +198,7 @@ function getRandomInteger( min, max ) {
 
 function animateConuses(conus) { 
   conus.position.z += SPEED;
-  if(conus.position.z == hero.position.z) {
+  if(conus.position.z + 2 == hero.position.z - 2) {
     //console.log('столкновение');
 
     conus.children.forEach(function (element, index) {
@@ -216,21 +216,10 @@ function animateConuses(conus) {
   $('#score p').text("Score: " + Math.floor(SCORE / 100));
 }
 
-function animateTwoConuses(conus1, conus2) {
-  conus1.position.z += SPEED;
-  conus2.position.z += SPEED;
-  if(conus1.position.z == hero.position.z && (conus1.position.x == hero.position.x || conus2.position.x == hero.position.x))
-      gameOver();
-  if(conus1.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
-    barier.shift();
-    barier.shift();
-  }
-}
-
 var boxConuses = function (number) {
   this.mesh = new THREE.Object3D();
   this.mesh.position.y = 3;
-  this.mesh.position.z = -PLANE_LENGTH / 2;
+  this.mesh.position.z = (-PLANE_LENGTH / 2) - 2;
   this.mesh.position.x = 0;
 
   if(number === 1) {
