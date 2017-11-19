@@ -9,7 +9,7 @@ var PLANE_WIDTH = 60,
     SCORE = 0;
 
 //переменные
-var axishelper = {},
+var axeshelper = {},
     camera = {},
     $container = {},
     controls = {},
@@ -18,12 +18,13 @@ var axishelper = {},
     directionalLight = {},
     globalRenderID = {},
     hero = {},
+    heroSpeed = 0.2,
     hemisphereLight = {},
     plane = {},
     planeGeometry = {},
     planeMaterial = {},
+    planeTexture = {},
     barier = [], 
-    // bariers = [],
     powerupSpawnIntervalID = {},
     powerupCounterIntervalID = {},
     powerupSpeedCounterIntervalID = {},
@@ -42,6 +43,7 @@ function render () {
       // } else 
       animateConuses(barier[index]);
   });
+  animateHero();
   //console.log(barier.length);
   renderer.render(scene, camera);
 }
@@ -83,15 +85,17 @@ function onWindowResize () {
 function Hero () {
   var hero = {},
       heroGeometry = {},
-      heroMaterial = {};
+      heroMaterial = {},
+      heroTexrute = {};
 
   heroGeometry = new THREE.SphereGeometry(2, 32, 32);
-  heroMaterial = new THREE.MeshNormalMaterial();
+  heroTexrute = new THREE.TextureLoader().load('/texture/ball.jpg');
+  heroMaterial = new THREE.MeshBasicMaterial({map: heroTexrute});
   hero = new THREE.Mesh(heroGeometry, heroMaterial);
   hero.castShadow = true;
   hero.position.set(0, 3, (PLANE_LENGTH / 2 + 2));
 
-  window.addEventListener('keydown', function () {
+  window.addEventListener('keydown', function (event) {
     if((event.keyCode === 65 || event.keyCode === 37) && hero.position.x !== -20) {
       hero.position.x -= 20;
     } else if((event.keyCode === 68 || event.keyCode === 39) && hero.position.x !== 20) {
@@ -100,6 +104,10 @@ function Hero () {
   });
 
   return hero;
+}
+
+function animateHero () {
+  hero.rotation.x -= heroSpeed;
 }
 
 function createLandscapeFloors () {
@@ -161,7 +169,7 @@ var Conuses = function () {
   // this.mesh.position.z = -PLANE_LENGTH / 2;
 
   var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
-  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6, shading: THREE.FlatShading});
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
 
   //create 1st conus
   var con1 = new THREE.Mesh(objectGeometry, objectMaterial);
@@ -266,6 +274,7 @@ function startBarierLogic () {
   powerupSpeedCounterIntervalID = window.setInterval(function() {
     if(INTERVAL > 400){
       INTERVAL -= 100;
+      heroSpeed += 0.05;
       window.clearInterval(powerupSpawnIntervalID);
       console.log(INTERVAL);
       powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
@@ -290,7 +299,7 @@ function initGame () {
   $container.get(0).appendChild(renderer.domElement);
 
   scene = new THREE.Scene();
-  axishelper = new THREE.AxisHelper(PLANE_LENGTH / 2);
+  axeshelper = new THREE.AxesHelper(PLANE_LENGTH / 2);
 
   camera = new THREE.PerspectiveCamera(45, containerWidth / containerHeight, 1, 3000);
   camera.position.set(0, PLANE_LENGTH / 100, PLANE_LENGTH / 2 + PLANE_LENGTH / 20);
@@ -306,7 +315,8 @@ function initGame () {
   controls.maxAzimuteAngle = 0;
   
   planeGeometry = new THREE.BoxGeometry(PLANE_WIDTH, PLANE_LENGTH + PLANE_LENGTH / 10, 1);
-  planeMaterial = new THREE.MeshBasicMaterial({color: 0x808080});
+  planeTexture = new THREE.TextureLoader().load('/texture/asphalt.jpg');
+  planeMaterial = new THREE.MeshBasicMaterial({map: planeTexture});
   plane = new THREE.Mesh(planeGeometry, planeMaterial);
   plane.rotation.x = 1.570;
   plane.receiveShadow = true;
@@ -338,7 +348,7 @@ $('#overlay-start').fadeIn(100);
 //     initGame();
 //     runGame();
 //   });
-window.addEventListener('keydown', function () {
+window.addEventListener('keydown', function (event) {
   if(event.keyCode === 32 && space) {
     space = false;
     $('#overlay-start').fadeOut(50);
