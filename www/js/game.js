@@ -343,16 +343,13 @@ function runGame () {
 }
 
 $('#overlay-start').fadeIn(100);
-// $('#btn-start').one('click', function () {
-//     $('#overlay-start').fadeOut(50);
-//     initGame();
-//     runGame();
-//   });
-window.addEventListener('keydown', function (event) {
-  if(event.keyCode === 32 && space) {
-    space = false;
-    $('#overlay-start').fadeOut(50);
-    initGame();
-    runGame();
-  }
-})
+
+$('#btnEnter').one('click', function() {
+  $('#overlay-start').fadeOut(50);
+  initGame();
+  runGame();
+
+  $(document).ready(function() {
+    $("#modalBox").modal('hide');
+  });
+});
