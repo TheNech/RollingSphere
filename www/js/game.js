@@ -53,8 +53,11 @@ function gameOver () {
   window.clearInterval(powerupSpawnIntervalID);
   window.clearInterval(powerupSpeedCounterIntervalID);
 
+  var end = Date(now);
+  SCORE = Math.floor(SCORE / 100);
   $('#overlay-gameover').fadeIn(100);
-  $('.message-container p:nth-child(2)').text("Score: " + Math.floor(SCORE / 100));
+  $('.message-container p:nth-child(2)').text("Score: " + SCORE);
+  socket.emit('end-game', { score: SCORE , time: end - start });
   $('#score p').fadeOut(50);
 
   $('#btn-restart').one('click', function () {
@@ -352,4 +355,6 @@ $('#btnEnter').one('click', function() {
   $(document).ready(function() {
     $("#modalBox").modal('hide');
   });
+
+  var start = Date(now);
 });
