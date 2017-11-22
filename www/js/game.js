@@ -53,7 +53,7 @@ function gameOver () {
   window.clearInterval(powerupSpawnIntervalID);
   window.clearInterval(powerupSpeedCounterIntervalID);
 
-  var end = Date(now);
+  var end = Date.now();
   SCORE = Math.floor(SCORE / 100);
   $('#overlay-gameover').fadeIn(100);
   $('.message-container p:nth-child(2)').text("Score: " + SCORE);
@@ -347,6 +347,7 @@ function runGame () {
 
 $('#overlay-start').fadeIn(100);
 
+var start;
 $('#btnEnter').one('click', function() {
   $('#overlay-start').fadeOut(50);
   initGame();
@@ -356,5 +357,5 @@ $('#btnEnter').one('click', function() {
     $("#modalBox").modal('hide');
   });
 
-  var start = Date(now);
+  start = Date.now();
 });
