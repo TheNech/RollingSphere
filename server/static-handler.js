@@ -3,6 +3,25 @@ module.exports = (request, response) => {
 
     let path;
 
+    if (request.url.split('/')[1] === 'bootstrap') {
+        
+        path = __dirname +  request.url.replace("/bootstrap", '/../node_modules/bootstrap/dist');
+
+        fs.readFile(path, (error, data) => {
+            if (error) {
+                response.writeHead(404);
+                response.end('Not found');
+
+                return;
+            }
+
+            response.writeHead(200);
+            response.end(data);
+        });
+
+        return;
+    }
+
     switch (request.url) {
         case '/':
             path = __dirname + '/../www/index.html';

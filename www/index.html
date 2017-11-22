@@ -7,19 +7,53 @@
 	<script type="text/javascript" src="./lib/jquery.min.js"></script>
 	<script type="text/javascript" src="./lib/three.min.js"></script>
 	<script type="text/javascript" src="./lib/OrbitControls.js"></script>
+	<script type="text/javascript" src="./bootstrap/js/bootstrap.min.js"></script> 
 
 	<link href="./css/style.css" rel="stylesheet">
+	<link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="./bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
 </head>
 <body>
 	<div id="container"></div>
 	<div id="overlay-start">
-		<div id="start-screen">
-			<p>Rolling Sphere</p>
-			<!-- <button id="btn-start">Start game</button> -->
+		<!-- <div id="start-screen">
+			
 			<P>Press space to start...</P>
-		</div>
+		</div> -->
+		<p>Rolling Sphere</p>			
+		<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#modalBox">
+			Authorization
+		</button>
 	</div>
 	
+	<div id="modalBox" class="modal fade" data-backdrop="static">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button class="close" type="button" data-dismiss="modal">
+						&times;
+					</button>
+					<h4 class="modal-title">Authorization</h4>
+				</div>
+				<div class="modal-body">
+					<input id="inputNickname" class="form-control" type="" value="" name="nickname" placeholder="Your nickname">
+				</div>
+				<div class="modal-footer">
+					<button id="btnEnter" class="btn btn-success" type="button">Enter</button>
+					<button class="btn btn-danger" type="button" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#btnEnter").one('click', (function(){
+				socket.emit('auth', { nickname: $("#inputNickname").val() });
+				$("#inputNickname").val("");
+			}));
+		});
+	</script>
+		
 	<div id ="overlay-gameover">
 		<div class="message-container">
 			<p>Game over!</p>

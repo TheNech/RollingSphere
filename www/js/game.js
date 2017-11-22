@@ -53,8 +53,11 @@ function gameOver () {
   window.clearInterval(powerupSpawnIntervalID);
   window.clearInterval(powerupSpeedCounterIntervalID);
 
+  var end = Date(now);
+  SCORE = Math.floor(SCORE / 100);
   $('#overlay-gameover').fadeIn(100);
-  $('.message-container p:nth-child(2)').text("Score: " + Math.floor(SCORE / 100));
+  $('.message-container p:nth-child(2)').text("Score: " + SCORE);
+  socket.emit('end-game', { score: SCORE , time: end - start });
   $('#score p').fadeOut(50);
 
   $('#btn-restart').one('click', function () {
@@ -343,16 +346,15 @@ function runGame () {
 }
 
 $('#overlay-start').fadeIn(100);
-// $('#btn-start').one('click', function () {
-//     $('#overlay-start').fadeOut(50);
-//     initGame();
-//     runGame();
-//   });
-window.addEventListener('keydown', function (event) {
-  if(event.keyCode === 32 && space) {
-    space = false;
-    $('#overlay-start').fadeOut(50);
-    initGame();
-    runGame();
-  }
-})
+
+$('#btnEnter').one('click', function() {
+  $('#overlay-start').fadeOut(50);
+  initGame();
+  runGame();
+
+  $(document).ready(function() {
+    $("#modalBox").modal('hide');
+  });
+
+  var start = Date(now);
+});

@@ -76,20 +76,17 @@ body {
 #start-screen p:nth-child(1) {
     color: #ffffff;
     font-size: 80px;
-    /*position: absolute;*/
-    /*left: 33%;
-    top: 20%;*/
     margin-top: 150px;
-    /*margin-bottom: 50px;*/
 }
 #start-screen p:nth-child(2) {
     color: #ffffff;
     font-size: 30px;
-    /*position: absolute;*/
-    /*left: 33%;
-    top: 20%;*/
     margin-top: 0px;
-    /*margin-bottom: 50px;*/
+}
+#overlay-start p:nth-child(1) {
+    color: #ffffff;
+    font-size: 80px;
+    margin-top: 150px;
 }
 #btn-start {
     color: green;
