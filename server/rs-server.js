@@ -11,6 +11,7 @@ class Server {
         this.__io = io;
         this.__idCounter = 0;
         this.__players = new Map();
+        this.__globalTopScore = new Set();
 
         this.__io.on('connection', (socket) => {
             this.newPlayer(socket);
@@ -26,15 +27,15 @@ class Server {
     }
 
     newPlayer(socket) {
-        let player = new Player(socket, this.nextId);
-        this.__players.set(player.name, player);
+        socket.on('auth', (data) => {
+            let player = new Player(socket, data.nickname);
+            this.__players.set(player.name, player);
 
-        this.__io.emit('new-player-connected',
-            {
+            this.__io.emit('new-player-connected', {
                 id: player.id,
                 pNumber: this.__players.size
-            }
-        );
+            });
+        });
     }
 
     playerDisconnect(player) {
@@ -48,12 +49,47 @@ class Server {
         );
     }
 
+    newGameScore(player) {
+        if (this.__globalTopScore.size < 10) {
+            this.__globalTopScore.add({ 
+                nickname: player.nickname,
+                score: player.lastScore,
+                time: Date.now()
+            });
+
+        } else {
+            let result = Array.from(this.__globalTopScore).reduce((min, current) => {
+                return current.score < min.score ? current : min;
+            });
+
+            if (result.score < player.lastScore) {
+                this.__globalTopScore.delete(result);
+                this.__globalTopScore.add({ 
+                    nickname: player.nickname,
+                    score: player.lastScore,
+                    time: Date.now()
+                });
+
+            } else {
+                return;
+            }
+        }
+
+        let top = [];
+        this.__globalTopScore.forEach((item) => {
+            top.push({
+                name: item.nickname,
+                score: item.score
+            });
+        });
+
+        this.__io.emit('new-global-top-score', top);
+    }
+
     get nextId() {
-        this.__idCounter++;
-        return this.__idCounter;
+        return ++this.__idCounter;
     }
 }
 
 const server = new Server(io);
 module.exports = server;
-//module.exports.playerDisconnect = server.playerDisconnect;

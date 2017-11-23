@@ -74,6 +74,12 @@
 		socket.on('player-disconnected', function(data) {
 			console.log('Player was disconnected. Id: ' + data.id + "\tCurrent number of players is " + data.pNumber);
 		});
+
+		socket.on('new-global-top-score', function(data){
+			console.log('new-global-top-score');
+  			console.log(data);
+  			console.log();
+		});
 	</script>
 </body>
 </html>
