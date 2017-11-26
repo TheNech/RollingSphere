@@ -6,7 +6,9 @@ var PLANE_WIDTH = 60,
     SPEED = 10,
     INTERVAL = 1000,
     INTERVAL_COUNT = 0,
-    SCORE = 0;
+    SCORE = 0
+    JUMP = false,
+    X_JUMP = 1;
 
 //переменные
 var axeshelper = {},
@@ -31,7 +33,8 @@ var axeshelper = {},
     queue = {},
     renderer = {},
     scene = {},
-    space = true;
+    space = true,
+    jumping = {};
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
@@ -52,6 +55,7 @@ function gameOver () {
   cancelAnimationFrame(globalRenderID);
   window.clearInterval(powerupSpawnIntervalID);
   window.clearInterval(powerupSpeedCounterIntervalID);
+  window.clearInterval(jumping);
 
   var end = Date.now();
   SCORE = Math.floor(SCORE / 100);
@@ -67,9 +71,12 @@ function gameOver () {
     });
     barier = [];
     hero.position.x = 0;
+    hero.position.y = 3;
     render();
     INTERVAL = 1000;
     SCORE = 0;
+    JUMP = false;
+    X_JUMP = 1;
     $('#score p').text("Score: " + SCORE);
     $('#score p').fadeIn(50);
     startBarierLogic();
@@ -103,6 +110,9 @@ function Hero () {
       hero.position.x -= 20;
     } else if((event.keyCode === 68 || event.keyCode === 39) && hero.position.x !== 20) {
       hero.position.x += 20;
+    } else if((event.keyCode === 87 || event.keyCode === 38)) {
+      if(!JUMP)
+        jumpHero();
     }
   });
 
@@ -111,6 +121,23 @@ function Hero () {
 
 function animateHero () {
   hero.rotation.x -= heroSpeed;
+}
+
+function jumpHero () {
+  JUMP = true;
+  X_JUMP = 1;
+
+  jumping = setInterval(function() {
+    hero.position.y = 3 + (-0.34375 * X_JUMP * X_JUMP + 2.75 * X_JUMP);
+    X_JUMP += 1;  
+  }, 70);
+
+  setTimeout(function () {
+    clearInterval(jumping);
+    hero.position.y = 3;
+    JUMP = false;
+    console.log("stop. JUMP = " + JUMP);
+  }, 490);
 }
 
 function createLandscapeFloors () {
@@ -213,7 +240,7 @@ function animateConuses(conus) {
     //console.log('столкновение');
 
     conus.children.forEach(function (element, index) {
-      if(conus.children[index].position.x == hero.position.x)
+      if((conus.children[index].position.x == hero.position.x) && (hero.position.y < (conus.position.y + 4)))
         gameOver();
     });
 
@@ -279,7 +306,7 @@ function startBarierLogic () {
       INTERVAL -= 100;
       heroSpeed += 0.05;
       window.clearInterval(powerupSpawnIntervalID);
-      console.log(INTERVAL);
+      //console.log(INTERVAL);
       powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
     }          
     
