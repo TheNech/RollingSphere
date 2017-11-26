@@ -77,6 +77,7 @@ function gameOver () {
     SCORE = 0;
     JUMP = false;
     X_JUMP = 1;
+    heroSpeed = 0.2;
     $('#score p').text("Score: " + SCORE);
     $('#score p').fadeIn(50);
     startBarierLogic();
@@ -128,16 +129,17 @@ function jumpHero () {
   X_JUMP = 1;
 
   jumping = setInterval(function() {
-    hero.position.y = 3 + (-0.34375 * X_JUMP * X_JUMP + 2.75 * X_JUMP);
-    X_JUMP += 0.5;  
-  }, 35);
+    // hero.position.y = 3 + (-0.34375 * X_JUMP * X_JUMP + 2.75 * X_JUMP);
+    hero.position.y = 3 + (-0.61111 * X_JUMP * X_JUMP + 3.6667 * X_JUMP);
+    X_JUMP += 0.25;  
+  }, 17.5);
 
   setTimeout(function () {
     clearInterval(jumping);
     hero.position.y = 3;
     JUMP = false;
     console.log("stop. JUMP = " + JUMP);
-  }, 490);
+  }, 350);
 }
 
 function createLandscapeFloors () {
