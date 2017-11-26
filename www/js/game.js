@@ -129,8 +129,8 @@ function jumpHero () {
 
   jumping = setInterval(function() {
     hero.position.y = 3 + (-0.34375 * X_JUMP * X_JUMP + 2.75 * X_JUMP);
-    X_JUMP += 1;  
-  }, 70);
+    X_JUMP += 0.5;  
+  }, 35);
 
   setTimeout(function () {
     clearInterval(jumping);
