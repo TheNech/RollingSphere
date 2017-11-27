@@ -76,7 +76,7 @@ function gameOver () {
     INTERVAL = 1000;
     SCORE = 0;
     JUMP = false;
-    X_JUMP = 1;
+    X_JUMP = 0.25;
     heroSpeed = 0.2;
     $('#score p').text("Score: " + SCORE);
     $('#score p').fadeIn(50);
@@ -126,20 +126,29 @@ function animateHero () {
 
 function jumpHero () {
   JUMP = true;
-  X_JUMP = 1;
+  X_JUMP = 0.25;
 
   jumping = setInterval(function() {
     // hero.position.y = 3 + (-0.34375 * X_JUMP * X_JUMP + 2.75 * X_JUMP);
     hero.position.y = 3 + (-0.61111 * X_JUMP * X_JUMP + 3.6667 * X_JUMP);
-    X_JUMP += 0.25;  
+    //console.log(hero.position.y); 
+    if(X_JUMP === 6) {
+      hero.position.y =3;
+      clearInterval(jumping);
+      hero.position.y = 3;
+      JUMP = false;
+      console.log("stop. JUMP = " + X_JUMP);
+    } else {
+      X_JUMP += 0.25;
+    } 
   }, 17.5);
 
-  setTimeout(function () {
-    clearInterval(jumping);
-    hero.position.y = 3;
-    JUMP = false;
-    console.log("stop. JUMP = " + JUMP);
-  }, 350);
+  // setTimeout(function () {
+  //   clearInterval(jumping);
+  //   hero.position.y = 3;
+  //   JUMP = false;
+  //   console.log("stop. JUMP = " + X_JUMP);
+  // }, 402.5);
 }
 
 function createLandscapeFloors () {
