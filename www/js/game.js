@@ -8,7 +8,9 @@ var PLANE_WIDTH = 60,
     INTERVAL_COUNT = 0,
     SCORE = 0
     JUMP = false,
-    X_JUMP = 1;
+    X_JUMP = 1,
+    COINS = 0,
+    COINS_BALANCE = 0;
 
 //переменные
 var axeshelper = {},
@@ -34,7 +36,8 @@ var axeshelper = {},
     renderer = {},
     scene = {},
     space = true,
-    jumping = {};
+    jumping = {},
+    coins = [];
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
@@ -78,6 +81,8 @@ function gameOver () {
     JUMP = false;
     X_JUMP = 0.25;
     heroSpeed = 0.2;
+    COINS = 0;
+    COINS_BALANCE = 0;
     $('#score p').text("Score: " + SCORE);
     $('#score p').fadeIn(50);
     startBarierLogic();
@@ -137,7 +142,7 @@ function jumpHero () {
       clearInterval(jumping);
       hero.position.y = 3;
       JUMP = false;
-      console.log("stop. JUMP = " + X_JUMP);
+      //console.log("stop. JUMP = " + X_JUMP);
     } else {
       X_JUMP += 0.25;
     } 
@@ -239,6 +244,18 @@ var Conuses = function () {
   con4.castShadow = true;
   con4.receiveShadow = true;
   this.mesh.add(con4);
+
+  //create coin
+  if(COINS_BALANCE >= 3) {
+    COINS_BALANCE = 0;
+    objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
+    objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700/*, shading: THREE.FlatShading*/});
+    var coin = new THREE.Mesh(objectGeometry, objectMaterial);
+    coin.position.x = 0;
+    coin.position.y = 4.25;
+    coin.rotation.x = 1.5;
+    this.mesh.add(coin);
+  }
 };
 
 function getRandomInteger( min, max ) {
@@ -247,18 +264,36 @@ function getRandomInteger( min, max ) {
 
 function animateConuses(conus) { 
   conus.position.z += SPEED;
+  conus.children.forEach(function (element, index) {
+    if(element.children.length > 4) {
+      element.children[4].rotation.z += 0.1;
+    }
+  });
+
   if(conus.position.z + 2 == hero.position.z - 2) {
     //console.log('столкновение');
+    //console.log(conus);
 
     conus.children.forEach(function (element, index) {
-      if((conus.children[index].position.x == hero.position.x) && (hero.position.y < (conus.position.y + 4)))
-        gameOver();
+      
+      if(element.position.x == hero.position.x) {
+        if(hero.position.y < (conus.position.y + 4)) {
+          gameOver();
+        } 
+        else if(element.children.length > 4) {
+          element.children.pop();
+          COINS++;
+        }    
+      }
+
     });
 
     return;
   }
-  if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
+  if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
+    scene.remove(barier[0]);
     barier.shift();
+  }
 
   SCORE += SPEED;
 
@@ -272,12 +307,14 @@ var boxConuses = function (number) {
   this.mesh.position.x = 0;
 
   if(number === 1) {
+    COINS_BALANCE++;
     var cons;
     cons = new Conuses();
     cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
     this.mesh.add(cons.mesh);
   }
   if(number === 2) {
+    COINS_BALANCE++;
     var barPos = [-1, 0, 1];
     var pos = getRandomInteger(0, barPos.length - 1);
     var con1;
@@ -348,7 +385,7 @@ function initGame () {
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
   controls.enablePan = false;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
   controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
   controls.maxPolarAngle = 1.55;
