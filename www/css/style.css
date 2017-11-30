@@ -68,6 +68,7 @@ body {
     position: absolute;
     top: 0%;
     left: 75%;
+    visibility: hidden;
 }
 #score p {
     font-size: 2em;
@@ -86,7 +87,7 @@ body {
 #overlay-start p:nth-child(1) {
     color: #ffffff;
     font-size: 80px;
-    margin-top: 150px;
+    margin-top: 200px;
 }
 #btn-start {
     color: green;
