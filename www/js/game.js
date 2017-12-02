@@ -357,18 +357,21 @@ function conusesGenerate() {
     COINS_BALANCE_ROAD = 0;
     var pos = getRandomInteger(-1, 1);
     for(var i = 0; i < 3; i++) {
-      coinsGenerate(pos);
-      coins[coins.length - 1].position.z -= i * 30;
+      if(INTERVAL > 500) {
+        coinsGenerate(pos, 50);
+        coins[coins.length - 1].position.z -= i * 50;
+      } else coinsGenerate(pos, 0);
+      coins[coins.length - 1].position.z -= i * 40;
     }
   }
 
 }
 
-function coinsGenerate(pos) {
+function coinsGenerate(pos, delta) {
   this.mesh = new THREE.Object3D();
   this.mesh.position.y = 3;
   this.mesh.position.x = 20 * pos;
-  this.mesh.position.z = (-PLANE_LENGTH / 2) - 70;
+  this.mesh.position.z = (-PLANE_LENGTH / 2) - 70 - delta;
   var objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
   var objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700/*, shading: THREE.FlatShading*/});
   var coin = new THREE.Mesh(objectGeometry, objectMaterial);
@@ -405,6 +408,8 @@ function startBarierLogic () {
       INTERVAL -= 100;
       heroSpeed += 0.05;
       
+      console.log(INTERVAL);
+
       window.clearInterval(powerupSpawnIntervalID);
       //console.log(INTERVAL);
       powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
