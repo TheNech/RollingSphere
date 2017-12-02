@@ -10,7 +10,8 @@ var PLANE_WIDTH = 60,
     JUMP = false,
     X_JUMP = 1,
     COINS = 0,
-    COINS_BALANCE = 0;
+    COINS_BALANCE = 0
+    COINS_BALANCE_ROAD = 0;
 
 //переменные
 var axeshelper = {},
@@ -41,13 +42,16 @@ var axeshelper = {},
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
-  
+
   barier.forEach( function ( element, index ) {
       // if(barier[index + 1] && barier[index].position.z == barier[index + 1].position.z) {
       //   animateTwoConuses(barier[index], barier[index + 1]);
       //   index++;
       // } else 
       animateConuses(barier[index]);
+  });
+  coins.forEach( function (element) {
+    animateCoins(element);
   });
   animateHero();
   //console.log(barier.length);
@@ -72,6 +76,9 @@ function gameOver () {
     barier.forEach(function (element, index) {
       scene.remove(barier[index]);
     });
+    coins.forEach(function (element, index) {
+      scene.remove(coins[index]);
+    });
     barier = [];
     hero.position.x = 0;
     hero.position.y = 3;
@@ -83,6 +90,8 @@ function gameOver () {
     heroSpeed = 0.2;
     COINS = 0;
     COINS_BALANCE = 0;
+    COINS_BALANCE_ROAD = 0;
+    coins = [];
     $('#score p').text("Score: " + SCORE);
     $('#score p').fadeIn(50);
     startBarierLogic();
@@ -277,7 +286,7 @@ function animateConuses(conus) {
     conus.children.forEach(function (element, index) {
       
       if(element.position.x == hero.position.x) {
-        if(hero.position.y < (conus.position.y + 4)) {
+        if(hero.position.y < (conus.position.y + 4)) {   
           gameOver();
         } 
         else if(element.children.length > 4) {
@@ -342,7 +351,49 @@ function conusesGenerate() {
     barier.push(box.mesh);
     scene.add(box.mesh);
   }
+
+  COINS_BALANCE_ROAD++;
+  if(COINS_BALANCE_ROAD > 2) {
+    COINS_BALANCE_ROAD = 0;
+    var pos = getRandomInteger(-1, 1);
+    for(var i = 0; i < 3; i++) {
+      coinsGenerate(pos);
+      coins[coins.length - 1].position.z -= i * 30;
+    }
+  }
+
 }
+
+function coinsGenerate(pos) {
+  this.mesh = new THREE.Object3D();
+  this.mesh.position.y = 3;
+  this.mesh.position.x = 20 * pos;
+  this.mesh.position.z = (-PLANE_LENGTH / 2) - 70;
+  var objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700/*, shading: THREE.FlatShading*/});
+  var coin = new THREE.Mesh(objectGeometry, objectMaterial);
+  coin.position.y = 0;
+  coin.rotation.x = 1.5;
+  this.mesh.add(coin);
+  coins.push(this.mesh);
+  scene.add(this.mesh);
+}
+
+function animateCoins(coin) {
+  coin.position.z += SPEED;
+  coin.rotation.y -= 0.1;
+  //console.log(coin.position.z);
+  if((coin.position.z == hero.position.z - 2) && (coin.position.x == hero.position.x) && (coin.position.y == hero.position.y)) {
+    COINS++;
+    scene.remove(coins[0]);
+    coins.shift();
+  }
+  if(coin.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
+    scene.remove(coins[0]);
+    coins.shift();
+  }
+}
+
 function startBarierLogic () {
   //var period = 1000;
   powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
@@ -353,10 +404,11 @@ function startBarierLogic () {
     if(INTERVAL > 400){
       INTERVAL -= 100;
       heroSpeed += 0.05;
+      
       window.clearInterval(powerupSpawnIntervalID);
       //console.log(INTERVAL);
       powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
-    }          
+    }       
     
   }, 5000);
 }
