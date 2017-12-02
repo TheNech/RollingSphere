@@ -20,6 +20,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "jquery": "^3.2.1",
+    "log4js": "^2.3.12",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "three": "^0.88.0"

@@ -1,10 +1,19 @@
+const format = require('util').format;
+const logger = require('./config').logger;
+
 module.exports = class Player {
     constructor(socket, nickname) {
         this.__id = this.server.nextId;
         this.__bestScore = 0
         this.__lastScore = 0;
         this.__timeInGame = 0;
-        this.__nickname = nickname || this.name;
+
+        if (!nickname || nickname.trim() === '') {
+            this.__nickname = this.name;
+            logger.warn('Player constructor: argument \'nickname\' is empty or undefined, using field \'name\' instead.');
+        } else {
+            this.__nickname = nickname;
+        }
 
         socket.emit('connected', { 
             id: this.id,
@@ -20,13 +29,13 @@ module.exports = class Player {
             this.endGame(data);
         });
 
-        console.log('Player "' + this.nickname + '" connected\n');
+        logger.info(format('Player %s connected. ID: %d.', this.nickname, this.id));
     }
 
     disconnect() {
         this.server.playerDisconnect(this);
 
-        console.log('Player "' + this.nickname + '" disconnected\n');
+        logger.info(format('Player %s disconnected.', this.nickname));
     }
 
     endGame(data) {
@@ -38,12 +47,8 @@ module.exports = class Player {
             this.__bestScore = this.lastScore;
         }
 
-        console.log('Player "' + this.nickname + '" finished game.');
-        console.log('New score:\t' + this.lastScore);
-        console.log('Best score:\t' + this.bestScore);
-        console.log('Game time:\t' + data.time);
-        console.log('Total time:\t' + this.timeInGame);
-        console.log();
+        logger.info(format('Player %s finished the game. Score: %d. Time: %ds %dms.',
+            this.nickname, data.score, Math.floor(data.time/1000), data.time%1000));
 
         this.server.newGameScore(this);
     }
