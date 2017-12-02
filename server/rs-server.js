@@ -1,12 +1,12 @@
 const app = require('http').createServer(require('./static-handler'));
 const io = require('socket.io')(app);
-
+const format = require('util').format;
+const logger = require('./config').logger;
 const Player = require('./player');
-
 
 class Server {
     constructor(io, port = 8080) {
-        console.log('Server starting...');
+        logger.info('Server starting...');
 
         this.__io = io;
         this.__idCounter = 0;
@@ -22,8 +22,7 @@ class Server {
 
     startServer(port) {
         app.listen(port);
-        console.log('Server started. Listening port ' + port);
-        console.log();
+        logger.info(format('Server started. Listening port %d.', port));
     }
 
     newPlayer(socket) {
