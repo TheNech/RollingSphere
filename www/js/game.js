@@ -353,15 +353,17 @@ function conusesGenerate() {
   }
 
   COINS_BALANCE_ROAD++;
-  if(COINS_BALANCE_ROAD > 2) {
+  if(COINS_BALANCE_ROAD > 4) {
     COINS_BALANCE_ROAD = 0;
     var pos = getRandomInteger(-1, 1);
     for(var i = 0; i < 3; i++) {
       if(INTERVAL > 500) {
         coinsGenerate(pos, 50);
-        coins[coins.length - 1].position.z -= i * 50;
-      } else coinsGenerate(pos, 0);
-      coins[coins.length - 1].position.z -= i * 40;
+        coins[coins.length - 1].position.z -= i * 40;
+      } else {
+        coinsGenerate(pos, 50);
+        coins[coins.length - 1].position.z -= i * 20;
+      }
     }
   }
 
@@ -386,7 +388,7 @@ function animateCoins(coin) {
   coin.position.z += SPEED;
   coin.rotation.y -= 0.1;
   //console.log(coin.position.z);
-  if((coin.position.z == hero.position.z - 2) && (coin.position.x == hero.position.x) && (coin.position.y == hero.position.y)) {
+  if((coin.position.z == hero.position.z - 2) && (coin.position.x == hero.position.x) && (hero.position.y <= coin.position.y + 1)) {
     COINS++;
     scene.remove(coins[0]);
     coins.shift();
