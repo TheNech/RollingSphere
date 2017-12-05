@@ -73,6 +73,15 @@ body {
     font-size: 2em;
     margin: 0;
 }
+#coins {
+    position: absolute;
+    top: 5%;
+    left: 75%;
+}
+#coins p {
+    font-size: 2em;
+    margin: 0;
+}
 #start-screen p:nth-child(1) {
     color: #ffffff;
     font-size: 80px;

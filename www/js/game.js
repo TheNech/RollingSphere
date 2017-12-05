@@ -68,34 +68,41 @@ function gameOver () {
   SCORE = Math.floor(SCORE / 100);
   $('#overlay-gameover').fadeIn(100);
   $('.message-container p:nth-child(2)').text("Score: " + SCORE);
-  socket.emit('end-game', { score: SCORE , time: end - start });
-  $('#score p').fadeOut(50);
+  socket.emit('end-game', { score: SCORE , time: end - start, coins: COINS });
+  $('#score p').fadeOut(50);  
+  $('#coins p').fadeOut(50);
 
   $('#btn-restart').one('click', function () {
     $('#overlay-gameover').fadeOut(50);
-    barier.forEach(function (element, index) {
-      scene.remove(barier[index]);
-    });
-    coins.forEach(function (element, index) {
-      scene.remove(coins[index]);
-    });
-    barier = [];
-    hero.position.x = 0;
-    hero.position.y = 3;
-    render();
-    INTERVAL = 1000;
-    SCORE = 0;
-    JUMP = false;
-    X_JUMP = 0.25;
-    heroSpeed = 0.2;
-    COINS = 0;
-    COINS_BALANCE = 0;
-    COINS_BALANCE_ROAD = 0;
-    coins = [];
-    $('#score p').text("Score: " + SCORE);
-    $('#score p').fadeIn(50);
+    resetValues();
     startBarierLogic();
   });
+}
+
+function resetValues () {
+  barier.forEach(function (element, index) {
+    scene.remove(barier[index]);
+  });
+  coins.forEach(function (element, index) {
+    scene.remove(coins[index]);
+  });
+  barier = [];
+  hero.position.x = 0;
+  hero.position.y = 3;
+  render();
+  INTERVAL = 1000;
+  SCORE = 0;
+  JUMP = false;
+  X_JUMP = 0.25;
+  heroSpeed = 0.2;
+  COINS = 0;
+  COINS_BALANCE = 0;
+  COINS_BALANCE_ROAD = 0;
+  coins = [];
+  $('#score p').text("Score: " + SCORE);
+  $('#score p').fadeIn(50);
+  $('#coins p').text("Coins: " + SCORE);
+  $('#coins p').fadeIn(50);
 }
 
 function onWindowResize () {
@@ -143,26 +150,16 @@ function jumpHero () {
   X_JUMP = 0.25;
 
   jumping = setInterval(function() {
-    // hero.position.y = 3 + (-0.34375 * X_JUMP * X_JUMP + 2.75 * X_JUMP);
     hero.position.y = 3 + (-0.61111 * X_JUMP * X_JUMP + 3.6667 * X_JUMP);
-    //console.log(hero.position.y); 
     if(X_JUMP === 6) {
       hero.position.y =3;
       clearInterval(jumping);
       hero.position.y = 3;
       JUMP = false;
-      //console.log("stop. JUMP = " + X_JUMP);
     } else {
       X_JUMP += 0.25;
     } 
   }, 17.5);
-
-  // setTimeout(function () {
-  //   clearInterval(jumping);
-  //   hero.position.y = 3;
-  //   JUMP = false;
-  //   console.log("stop. JUMP = " + X_JUMP);
-  // }, 402.5);
 }
 
 function createLandscapeFloors () {
@@ -219,9 +216,6 @@ function createSpotlights () {
 var Conuses = function () {
 
   this.mesh = new THREE.Object3D();
-  
-  // this.mesh.position.y = 3;
-  // this.mesh.position.z = -PLANE_LENGTH / 2;
 
   var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
   var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
@@ -275,23 +269,22 @@ function animateConuses(conus) {
   conus.position.z += SPEED;
   conus.children.forEach(function (element, index) {
     if(element.children.length > 4) {
-      element.children[4].rotation.z += 0.1;
+      element.children[element.children.length - 1].rotation.z += 0.1;
     }
   });
 
   if(conus.position.z + 2 == hero.position.z - 2) {
-    //console.log('столкновение');
-    //console.log(conus);
 
     conus.children.forEach(function (element, index) {
       
       if(element.position.x == hero.position.x) {
-        if(hero.position.y < (conus.position.y + 4)) {   
-          gameOver();
+        if(hero.position.y < (conus.position.y + 4)) {  
+         gameOver();
         } 
         else if(element.children.length > 4) {
           element.children.pop();
           COINS++;
+          $('#coins p').text("Coins: " + COINS);
         }    
       }
 
@@ -326,15 +319,14 @@ var boxConuses = function (number) {
     COINS_BALANCE++;
     var barPos = [-1, 0, 1];
     var pos = getRandomInteger(0, barPos.length - 1);
-    var con1;
-    con1 = new Conuses();
+    var con1 = new Conuses();
+
     con1.mesh.position.x = 20 * barPos[pos];
     this.mesh.add(con1.mesh);
     barPos.splice(pos, 1);
 
     pos = getRandomInteger(0, barPos.length - 1);
-    var con2;
-    con2 = new Conuses();
+    var con2 = new Conuses();
     con2.mesh.position.x = 20 * barPos[pos];
     this.mesh.add(con2.mesh);
   }
@@ -352,18 +344,13 @@ function conusesGenerate() {
     scene.add(box.mesh);
   }
 
-  COINS_BALANCE_ROAD++;
-  if(COINS_BALANCE_ROAD > 4) {
-    COINS_BALANCE_ROAD = 0;
-    var pos = getRandomInteger(-1, 1);
-    for(var i = 0; i < 3; i++) {
-      if(INTERVAL > 500) {
-        coinsGenerate(pos, 50);
-        coins[coins.length - 1].position.z -= i * 40;
-      } else {
-        coinsGenerate(pos, 50);
-        coins[coins.length - 1].position.z -= i * 20;
-      }
+  if((getRandomInteger(1, 5) == 1)) {
+    if (INTERVAL > 500) {
+      var pos = getRandomInteger(-1, 1);
+      coinsGenerate(pos, 90);
+    } else {
+      var pos = getRandomInteger(-1, 1);
+      coinsGenerate(pos, 70);
     }
   }
 
@@ -387,9 +374,10 @@ function coinsGenerate(pos, delta) {
 function animateCoins(coin) {
   coin.position.z += SPEED;
   coin.rotation.y -= 0.1;
-  //console.log(coin.position.z);
+
   if((coin.position.z == hero.position.z - 2) && (coin.position.x == hero.position.x) && (hero.position.y <= coin.position.y + 1)) {
     COINS++;
+    $('#coins p').text("Coins: " + COINS);
     scene.remove(coins[0]);
     coins.shift();
   }
@@ -409,8 +397,6 @@ function startBarierLogic () {
     if(INTERVAL > 400){
       INTERVAL -= 100;
       heroSpeed += 0.05;
-      
-      console.log(INTERVAL);
 
       window.clearInterval(powerupSpawnIntervalID);
       //console.log(INTERVAL);
