@@ -1,15 +1,16 @@
 const app = require('http').createServer(require('./static-handler'));
 const io = require('socket.io')(app);
+const config = require('./config');
+const logger = config.logger;
 const format = require('util').format;
-const logger = require('./config').logger;
-const Player = require('./player');
+const Player = require('./player-wrapper');
+
 
 class Server {
-    constructor(io, port = 8080) {
+    constructor(io) {
         logger.info('Server starting...');
 
         this.__io = io;
-        this.__idCounter = 0;
         this.__players = new Map();
         this.__globalTopScore = new Set();
 
@@ -17,45 +18,41 @@ class Server {
             this.newPlayer(socket);
         });
 
-        this.startServer(port);
+        this.__startServer();
     }
 
-    startServer(port) {
-        app.listen(port);
-        logger.info(format('Server started. Listening port %d.', port));
+    __startServer(port) {
+        app.listen(config.port);
+        logger.info(format('Server started. Listening port %d.', config.port));
     }
 
     newPlayer(socket) {
         socket.on('auth', (data) => {
-            let player = new Player(socket, data.nickname);
-            this.__players.set(player.name, player);
+            // TODO: auth via db and registration event
+            let player = new Player(socket);
+            this.__players.set(player.username, player);
 
-            this.__io.emit('new-player-connected', {
-                id: player.id,
-                pNumber: this.__players.size
+            this.__io.emit('update-online', {
+                pOnline: this.__players.size
             });
         });
     }
 
     playerDisconnect(player) {
-        this.__players.delete(player.name);
+        this.__players.delete(player.username);
 
-        this.__io.emit('player-disconnected',
-            {
-                id: player.id,
-                pNumber: this.__players.size
-            }
-        );
+        this.__io.emit('update-online', {
+                pOnline: this.__players.size
+        });
     }
 
-    newGameScore(player) {
+    newScore(player) {
         if (this.__globalTopScore.size < 10) {
             this.__globalTopScore.add({ 
-                nickname: player.nickname,
+                username: player.username,
                 score: player.lastScore,
                 time: Date.now()
             });
-
         } else {
             let result = Array.from(this.__globalTopScore).reduce((min, current) => {
                 return current.score < min.score ? current : min;
@@ -64,11 +61,10 @@ class Server {
             if (result.score < player.lastScore) {
                 this.__globalTopScore.delete(result);
                 this.__globalTopScore.add({ 
-                    nickname: player.nickname,
+                    username: player.username,
                     score: player.lastScore,
                     time: Date.now()
                 });
-
             } else {
                 return;
             }
@@ -77,18 +73,13 @@ class Server {
         let top = [];
         this.__globalTopScore.forEach((item) => {
             top.push({
-                name: item.nickname,
+                user: item.username,
                 score: item.score
             });
         });
 
-        this.__io.emit('new-global-top-score', top);
-    }
-
-    get nextId() {
-        return ++this.__idCounter;
+        this.__io.emit('update-top-score', top);
     }
 }
 
-const server = new Server(io);
-module.exports = server;
+module.exports = new Server(io);

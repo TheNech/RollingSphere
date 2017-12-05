@@ -19,5 +19,6 @@ log4js.configure({
 });
 
 module.exports = {
+    port: process.env.port || 8080,
     logger: log4js.getLogger()
 };
