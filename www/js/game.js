@@ -8,7 +8,10 @@ var PLANE_WIDTH = 60,
     INTERVAL_COUNT = 0,
     SCORE = 0
     JUMP = false,
-    X_JUMP = 1;
+    X_JUMP = 1,
+    COINS = 0,
+    COINS_BALANCE = 0
+    COINS_BALANCE_ROAD = 0;
 
 //переменные
 var axeshelper = {},
@@ -34,17 +37,21 @@ var axeshelper = {},
     renderer = {},
     scene = {},
     space = true,
-    jumping = {};
+    jumping = {},
+    coins = [];
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
-  
+
   barier.forEach( function ( element, index ) {
       // if(barier[index + 1] && barier[index].position.z == barier[index + 1].position.z) {
       //   animateTwoConuses(barier[index], barier[index + 1]);
       //   index++;
       // } else 
       animateConuses(barier[index]);
+  });
+  coins.forEach( function (element) {
+    animateCoins(element);
   });
   animateHero();
   //console.log(barier.length);
@@ -61,27 +68,41 @@ function gameOver () {
   SCORE = Math.floor(SCORE / 100);
   $('#overlay-gameover').fadeIn(100);
   $('.message-container p:nth-child(2)').text("Score: " + SCORE);
-  socket.emit('end-game', { score: SCORE , time: end - start });
-  $('#score p').fadeOut(50);
+  socket.emit('end-game', { score: SCORE , time: end - start, coins: COINS });
+  $('#score p').fadeOut(50);  
+  $('#coins p').fadeOut(50);
 
   $('#btn-restart').one('click', function () {
     $('#overlay-gameover').fadeOut(50);
-    barier.forEach(function (element, index) {
-      scene.remove(barier[index]);
-    });
-    barier = [];
-    hero.position.x = 0;
-    hero.position.y = 3;
-    render();
-    INTERVAL = 1000;
-    SCORE = 0;
-    JUMP = false;
-    X_JUMP = 0.25;
-    heroSpeed = 0.2;
-    $('#score p').text("Score: " + SCORE);
-    $('#score p').fadeIn(50);
+    resetValues();
     startBarierLogic();
   });
+}
+
+function resetValues () {
+  barier.forEach(function (element, index) {
+    scene.remove(barier[index]);
+  });
+  coins.forEach(function (element, index) {
+    scene.remove(coins[index]);
+  });
+  barier = [];
+  hero.position.x = 0;
+  hero.position.y = 3;
+  render();
+  INTERVAL = 1000;
+  SCORE = 0;
+  JUMP = false;
+  X_JUMP = 0.25;
+  heroSpeed = 0.2;
+  COINS = 0;
+  COINS_BALANCE = 0;
+  COINS_BALANCE_ROAD = 0;
+  coins = [];
+  $('#score p').text("Score: " + SCORE);
+  $('#score p').fadeIn(50);
+  $('#coins p').text("Coins: " + SCORE);
+  $('#coins p').fadeIn(50);
 }
 
 function onWindowResize () {
@@ -129,26 +150,16 @@ function jumpHero () {
   X_JUMP = 0.25;
 
   jumping = setInterval(function() {
-    // hero.position.y = 3 + (-0.34375 * X_JUMP * X_JUMP + 2.75 * X_JUMP);
     hero.position.y = 3 + (-0.61111 * X_JUMP * X_JUMP + 3.6667 * X_JUMP);
-    //console.log(hero.position.y); 
     if(X_JUMP === 6) {
       hero.position.y =3;
       clearInterval(jumping);
       hero.position.y = 3;
       JUMP = false;
-      console.log("stop. JUMP = " + X_JUMP);
     } else {
       X_JUMP += 0.25;
     } 
   }, 17.5);
-
-  // setTimeout(function () {
-  //   clearInterval(jumping);
-  //   hero.position.y = 3;
-  //   JUMP = false;
-  //   console.log("stop. JUMP = " + X_JUMP);
-  // }, 402.5);
 }
 
 function createLandscapeFloors () {
@@ -205,9 +216,6 @@ function createSpotlights () {
 var Conuses = function () {
 
   this.mesh = new THREE.Object3D();
-  
-  // this.mesh.position.y = 3;
-  // this.mesh.position.z = -PLANE_LENGTH / 2;
 
   var objectGeometry = new THREE.CylinderGeometry(0, 2.5, 4, 11);
   var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
@@ -239,6 +247,18 @@ var Conuses = function () {
   con4.castShadow = true;
   con4.receiveShadow = true;
   this.mesh.add(con4);
+
+  //create coin
+  if(COINS_BALANCE >= 3) {
+    COINS_BALANCE = 0;
+    objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
+    objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700/*, shading: THREE.FlatShading*/});
+    var coin = new THREE.Mesh(objectGeometry, objectMaterial);
+    coin.position.x = 0;
+    coin.position.y = 4.25;
+    coin.rotation.x = 1.5;
+    this.mesh.add(coin);
+  }
 };
 
 function getRandomInteger( min, max ) {
@@ -247,18 +267,35 @@ function getRandomInteger( min, max ) {
 
 function animateConuses(conus) { 
   conus.position.z += SPEED;
+  conus.children.forEach(function (element, index) {
+    if(element.children.length > 4) {
+      element.children[element.children.length - 1].rotation.z += 0.1;
+    }
+  });
+
   if(conus.position.z + 2 == hero.position.z - 2) {
-    //console.log('столкновение');
 
     conus.children.forEach(function (element, index) {
-      if((conus.children[index].position.x == hero.position.x) && (hero.position.y < (conus.position.y + 4)))
-        gameOver();
+      
+      if(element.position.x == hero.position.x) {
+        if(hero.position.y < (conus.position.y + 4)) {  
+         gameOver();
+        } 
+        else if(element.children.length > 4) {
+          element.children.pop();
+          COINS++;
+          $('#coins p').text("Coins: " + COINS);
+        }    
+      }
+
     });
 
     return;
   }
-  if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10)
+  if(conus.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
+    scene.remove(barier[0]);
     barier.shift();
+  }
 
   SCORE += SPEED;
 
@@ -272,23 +309,24 @@ var boxConuses = function (number) {
   this.mesh.position.x = 0;
 
   if(number === 1) {
+    COINS_BALANCE++;
     var cons;
     cons = new Conuses();
     cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
     this.mesh.add(cons.mesh);
   }
   if(number === 2) {
+    COINS_BALANCE++;
     var barPos = [-1, 0, 1];
     var pos = getRandomInteger(0, barPos.length - 1);
-    var con1;
-    con1 = new Conuses();
+    var con1 = new Conuses();
+
     con1.mesh.position.x = 20 * barPos[pos];
     this.mesh.add(con1.mesh);
     barPos.splice(pos, 1);
 
     pos = getRandomInteger(0, barPos.length - 1);
-    var con2;
-    con2 = new Conuses();
+    var con2 = new Conuses();
     con2.mesh.position.x = 20 * barPos[pos];
     this.mesh.add(con2.mesh);
   }
@@ -305,7 +343,50 @@ function conusesGenerate() {
     barier.push(box.mesh);
     scene.add(box.mesh);
   }
+
+  if((getRandomInteger(1, 5) == 1)) {
+    if (INTERVAL > 500) {
+      var pos = getRandomInteger(-1, 1);
+      coinsGenerate(pos, 90);
+    } else {
+      var pos = getRandomInteger(-1, 1);
+      coinsGenerate(pos, 70);
+    }
+  }
+
 }
+
+function coinsGenerate(pos, delta) {
+  this.mesh = new THREE.Object3D();
+  this.mesh.position.y = 3;
+  this.mesh.position.x = 20 * pos;
+  this.mesh.position.z = (-PLANE_LENGTH / 2) - 70 - delta;
+  var objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700/*, shading: THREE.FlatShading*/});
+  var coin = new THREE.Mesh(objectGeometry, objectMaterial);
+  coin.position.y = 0;
+  coin.rotation.x = 1.5;
+  this.mesh.add(coin);
+  coins.push(this.mesh);
+  scene.add(this.mesh);
+}
+
+function animateCoins(coin) {
+  coin.position.z += SPEED;
+  coin.rotation.y -= 0.1;
+
+  if((coin.position.z == hero.position.z - 2) && (coin.position.x == hero.position.x) && (hero.position.y <= coin.position.y + 1)) {
+    COINS++;
+    $('#coins p').text("Coins: " + COINS);
+    scene.remove(coins[0]);
+    coins.shift();
+  }
+  if(coin.position.z > PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
+    scene.remove(coins[0]);
+    coins.shift();
+  }
+}
+
 function startBarierLogic () {
   //var period = 1000;
   powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
@@ -316,10 +397,11 @@ function startBarierLogic () {
     if(INTERVAL > 400){
       INTERVAL -= 100;
       heroSpeed += 0.05;
+
       window.clearInterval(powerupSpawnIntervalID);
       //console.log(INTERVAL);
       powerupSpawnIntervalID = window.setInterval(conusesGenerate, INTERVAL);
-    }          
+    }       
     
   }, 5000);
 }
@@ -348,7 +430,7 @@ function initGame () {
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
   controls.enablePan = false;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
   controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
   controls.maxPolarAngle = 1.55;
