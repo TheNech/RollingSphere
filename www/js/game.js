@@ -345,13 +345,15 @@ function conusesGenerate() {
   }
 
   if((getRandomInteger(1, 5) == 1)) {
-    if (INTERVAL > 500) {
-      var pos = getRandomInteger(-1, 1);
-      coinsGenerate(pos, 90);
-    } else {
-      var pos = getRandomInteger(-1, 1);
-      coinsGenerate(pos, 70);
-    }
+    var pos = getRandomInteger(-1, 1);
+    coinsGenerate(pos, 90);
+    // if (INTERVAL > 500) {
+    //   var pos = getRandomInteger(-1, 1);
+    //   coinsGenerate(pos, 90);
+    // } else {
+    //   var pos = getRandomInteger(-1, 1);
+    //   coinsGenerate(pos, 70);
+    // }
   }
 
 }
