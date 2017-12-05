@@ -159,7 +159,7 @@ function jumpHero () {
     } else {
       X_JUMP += 0.25;
     } 
-  }, 17.5);
+  }, 15);
 }
 
 function createLandscapeFloors () {
@@ -394,7 +394,7 @@ function startBarierLogic () {
   //window.clearInterval(powerupSpawnIntervalID);
 
   powerupSpeedCounterIntervalID = window.setInterval(function() {
-    if(INTERVAL > 400){
+    if(INTERVAL > 500){
       INTERVAL -= 100;
       heroSpeed += 0.05;
 
