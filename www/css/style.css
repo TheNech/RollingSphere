@@ -1,32 +1,22 @@
 html,
 body,
 #container,
-#overlay-gameover {
-    background-color: #000000;
-    /*font-family: */
+#overlay-start {
+    /*background-color: #000000;*/
     font-weight: 700;
     overflow: hidden;
     position: relative;
     width: 100%;
     height: 100%;
-}
-
-body {
     margin: 0px;
 }
-
-#container,
-.message-container {
-    margin-top: -384px;
-    margin-left: -512px;
+#container {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 1024px;
-    height: 768px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
-
-#overlay-gameover,
 #overlay-start {
     text-align: center;
     background-color: rgba(0, 0, 0, 0.875);
@@ -35,83 +25,82 @@ body {
     top: 0;
     left: 0;
 }
-
-.message-container p:nth-child(1) {
-    color: #ffffff;
-    font-size: 80px;
-    margin-top: 300px;
-    margin-bottom: 50px;
-}
-.message-container p:nth-child(2) {
-    color: #ffffff;
-    font-size: 40px;    
-}
-.message-container  button {
-    color: green;
-    font-size: 30px;
-    background-color: transparent;
-    border: 2px solid green;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 20px;
-    padding: 10px 40px;
-}
-.message-container button:hover {
-    color: #00FF00;
-    border-color: #00FF00;
-}
-
-.message-container button:focus {
-    outline: 0;
-}
 #score {
     position: absolute;
     top: 0%;
-    left: 75%;
+    left: 80%;
     visibility: hidden;
 }
 #score p {
     font-size: 2em;
     margin: 0;
 }
-#start-screen p:nth-child(1) {
+#start-screen p {
     color: #ffffff;
     font-size: 80px;
     margin-top: 150px;
 }
-#start-screen p:nth-child(2) {
-    color: #ffffff;
-    font-size: 30px;
-    margin-top: 0px;
-}
 #overlay-start p:nth-child(1) {
-    color: #ffffff;
+    color: #00FFFF;
     font-size: 80px;
     margin-top: 200px;
+    font-family: "Algerian";
 }
-#btn-start {
-    color: green;
-    font-size: 30px;
-    background-color: transparent;
-    border: 2px solid green;
-    border-radius: 50%;
-    cursor: pointer;
-    margin-top: 20px;
-    padding: 10px 40px;
-}
-#btn-start:hover {
-    color: #00FF00;
-    border-color: #00FF00;
-}
-#btn-start:focus {
-    outline: 0;
-}
-#overlay-start {
+#mainScreen {
     background-color: #000000;
-    /*font-family: */
-    font-weight: 700;
-    overflow: hidden;
-    position: relative;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    overflow: auto;
+}
+#mainScreen button {
+    font-family: "Algerian";
+    font-size: 30px;
+}
+#btnStartGame {
+    margin: 0;
+    position: absolute;
+    visibility: hidden;
+    top: 5%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+#inputs {
+    margin-left: 43%;
+    width: 15%;
+    font-family: "mv boli";
+}
+#inputs input {
+    margin-bottom: 3%;
+}
+#buttons button:nth-child(1) {
+    font-size: 20px;
+    margin-top: 2%;
+    float: left;
+}
+#buttons button:nth-child(2) {
+    float: right;
+}
+#modalBoxResult h4,
+#modalBoxReg h4 {
+    font-family: "mv boli";
+    font-size: 25px;
+}
+#modalBoxReg input {
+    font-family: "mv boli";
+    margin-bottom: 2%;
+}
+#modalBoxResult p {
+    font-family: "mv boli";
+    font-size: 20px;
+}
+#modalBoxResult button,
+#modalBoxReg button {
+    font-family: "mv boli";
+    font-size: 20px;
+}
+#btnRegRegistr {
+    float: left;
 }

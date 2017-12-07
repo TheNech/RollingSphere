@@ -15,54 +15,113 @@
 </head>
 <body>
 	<div id="container"></div>
+
 	<div id="overlay-start">
-		<!-- <div id="start-screen">
-			
-			<P>Press space to start...</P>
-		</div> -->
-		<p><font color="aqua" face="Algerian">Rolling Sphere</font></p>
+		<p>Rolling Sphere</p>
+		<form id="inputs">			
+			<input id="inputNickname" class="form-control" name="nickname" placeholder="Your nickname">
+			<input id="inputPassword" class="form-control" name="password" placeholder="Your password" type="password">
+			<div id="buttons">
+				<button id="btnReg" class="btn-link active" type="button">Registration</button>
+				<button id="btnEnter" class="btn btn-primary" type="button">Login</button>	
+			</div>
+		</form>		
 	</div>
+
+	<script type="text/javascript">
+		var nick = $('#inputNickname').val();
+		var pass = $('#inputPassword').val();
+
+		$("#btnEnter").on('click', (function() {
+			socket.emit('auth', { username: nick, password: pass });					
+		}));		
+		
+		$("#inputs").trigger('reset');		
+	</script>
 	
-	<div id="modalBox" class="modal fade" data-backdrop="static">
-		<div class="modal-dialog">
+	<div id="modalBoxReg" class="modal fade" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button class="close" type="button" data-dismiss="modal">
 						&times;
 					</button>
-					<h4 class="modal-title">Authorization</h4>
+					<h4 class="modal-title">Registration</h4>
 				</div>
 				<div class="modal-body">
-					<input id="inputNickname" class="form-control" value="" name="nickname" placeholder="Your nickname">
+					<form id="inpReg">
+						<input id="inputNick" class="form-control" name="nickname" placeholder="Your nickname" required>
+						<input id="inputPass" class="form-control" name="password" placeholder="Your password" type="password">	
+						<input id="inputRepeatPass" class="form-control" name="repeatPass" placeholder="Repeat your password" type="password">
+					</form>
 				</div>
 				<div class="modal-footer">
-					<button id="btnEnter" class="btn btn-success" type="button" onclick="score.style.visibility='visible'">Enter</button>
-					<button class="btn btn-danger" type="button" data-dismiss="modal">Close</button>
+					<button id="btnRegRegistr" class="btn btn-primary active" type="button">Registration</button>
+					<button id="btnRegClose" class="btn btn-danger active" type="button" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<script>
-	  $(document).ready(function() {
-	    $("#modalBox").modal('show');
-	  });   
-	</script>
-
 	<script type="text/javascript">
-		$(document).ready(function(){
-			$("#btnEnter").one('click', (function(){
-				socket.emit('auth', { nickname: $("#inputNickname").val() });
-				$("#inputNickname").val("");
-			}));
+		$('#btnReg').on('click', function () {
+			$('#modalBoxReg').modal('show');
 		});
 
+		$('#btnRegRegistr').on('click', function () {
+			if ($('#inputNick').val().length == 0 || $('#inputPass').val().length == 0 || $('#inputRepeatPass').val().length == 0) {
+				alert('Not all fields are filled');
+				return;
+			}
+
+			if ($('#inputPass').val() != $('#inputRepeatPass').val()) {
+				alert('Passwords do not match');
+				return;
+			}
+
+			socket.emit('reg', { username: $('#inputNick').val(), password: $('#inputPass').val(), repeatPass: $('#inputRepeatPass').val() });
+		});
+
+		$('#inpReg').trigger('reset');
 	</script>
+
+	<div id="modalBoxResult" class="modal fade" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button class="close" type="button" data-dismiss="modal">
+						&times;
+					</button>
+					<h4 class="modal-title">Result</h4>
+				</div>
+				<div class="modal-body">
+					<p></p>
+					<p></p>
+					<p></p>
+				</div>
+				<div class="modal-footer">
+					<button id="btn-OK" class="btn btn-primary" type="button"><font>OK</font></button>
+					<button id="btn-restart" class="btn btn-primary" type="button">Restart</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="mainScreen">
+		<div id="btnStartGame">
+			<button type="button" class="btn btn-primary">Start Game</button>
+		</div>
+		<div>
+			
+		</div>
+	</div>
+
 		
 	<div id ="overlay-gameover">
 		<div class="message-container">
-			<p>Game over!</p>
-			<p>Score: </p>
+			<p><font color="Boston University Red" face="Algerian">Game over!</font></p>
+			<p><font size="7" color="" face="Algerian">Score: </font></p>
+			<button id="btn-returnMainMenu">Main menu</button>
 			<button id="btn-restart">Play again</button>
 		</div>
 	</div>

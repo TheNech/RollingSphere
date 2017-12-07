@@ -37,43 +37,57 @@ function render () {
   globalRenderID = requestAnimationFrame(render);
   
   barier.forEach( function ( element, index ) {
-      // if(barier[index + 1] && barier[index].position.z == barier[index + 1].position.z) {
-      //   animateTwoConuses(barier[index], barier[index + 1]);
-      //   index++;
-      // } else 
       animateConuses(barier[index]);
   });
   animateHero();
-  //console.log(barier.length);
   renderer.render(scene, camera);
 }
 
 function gameOver () {
   cancelAnimationFrame(globalRenderID);
   window.clearInterval(powerupSpawnIntervalID);
-  window.clearInterval(powerupSpeedCounterIntervalID);
+  window.clearInterval(powerupSpeedCounterIntervalID);  
 
   var end = Date.now();
   SCORE = Math.floor(SCORE / 100);
-  $('#overlay-gameover').fadeIn(100);
-  $('.message-container p:nth-child(2)').text("Score: " + SCORE);
-  socket.emit('end-game', { score: SCORE , time: end - start });
-  $('#score p').fadeOut(50);
+  socket.emit('end-game', { score: SCORE , time: end - start });  
+  
+  $('#modalBoxResult').modal('show');
+
+  $('#modalBoxResult p:nth-child(1)').text("Score: " + SCORE);
+  $('#modalBoxResult p:nth-child(2)').text("Coins: " + 0);
+  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');
+  
+  resetVariables();
+  $('#btn-OK').one('click', function () {
+    $('#score p').fadeOut(50);
+    $('#modalBoxResult').modal('hide');
+    $('#mainScreen').fadeIn(50);
+    document.getElementById('mainScreen').style.position = "absolute";
+  });  
 
   $('#btn-restart').one('click', function () {
-    $('#overlay-gameover').fadeOut(50);
-    barier.forEach(function (element, index) {
-      scene.remove(barier[index]);
-    });
-    barier = [];
-    hero.position.x = 0;
-    render();
-    INTERVAL = 1000;
-    SCORE = 0;
+
+    $('#modalBoxResult').modal('hide');
+    $('#mainScreen').fadeOut(50);
     $('#score p').text("Score: " + SCORE);
     $('#score p').fadeIn(50);
+
     startBarierLogic();
+    start = Date.now();
   });
+}
+
+function resetVariables () {
+  barier.forEach(function (element, index) {
+    scene.remove(barier[index]);
+  });
+  barier = [];
+  hero.position.x = 0;
+  render();
+  INTERVAL = 1000;
+  SCORE = 0;
+  heroSpeed = 0.2;
 }
 
 function onWindowResize () {
@@ -345,17 +359,27 @@ function runGame () {
   onWindowResize();
 }
 
-$('#overlay-start').fadeIn(100);
-
 var start;
-$('#btnEnter').one('click', function() {
-  $('#overlay-start').fadeOut(50);
+function startGame () {
+  $('#mainScreen').fadeOut(50);
+  document.getElementById('score').style.visibility = "visible";
+
   initGame();
   runGame();
 
-  $(document).ready(function() {
-    $("#modalBox").modal('hide');
-  });
-
   start = Date.now();
+}
+
+$('#overlay-start').fadeIn(100);
+
+$('#btnEnter').on('click', function () {
+
+  $('#overlay-start').fadeOut(50);
+  $('#mainScreen').fadeIn(50);
+
+  document.getElementById('btnStartGame').style.visibility = "visible";
+});
+
+$('#btnStartGame').on('click', function () {
+  startGame();
 });
