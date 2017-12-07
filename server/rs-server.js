@@ -3,6 +3,8 @@ const io = require('socket.io')(app);
 const config = require('./config');
 const logger = config.logger;
 const format = require('util').format;
+const db = require('./database');
+const PModel = require('./models/player');
 const Player = require('./player-wrapper');
 
 
@@ -15,7 +17,7 @@ class Server {
         this.__globalTopScore = new Set();
 
         this.__io.on('connection', (socket) => {
-            this.newPlayer(socket);
+            this.newConnection(socket);
         });
 
         this.__startServer();
@@ -26,15 +28,48 @@ class Server {
         logger.info(format('Server started. Listening port %d.', config.port));
     }
 
-    newPlayer(socket) {
+    newConnection(socket) {
         socket.on('auth', (data) => {
-            // TODO: auth via db and registration event
-            let player = new Player(socket);
-            this.__players.set(player.username, player);
+            PModel.findOne({username: data.username}, (err, user) => {
+                socket.emit('auth', {
+                    successfully: (!err && user) ? true : false
+                });
 
-            this.__io.emit('update-online', {
-                pOnline: this.__players.size
+                if (err) {
+                    logger.error('Error in auth handler! Message: ' + err.message);
+                } else if (!user) {
+                    logger.info(format('%s authorization failed.', data.username));
+                } else {
+                    logger.info(format('%s authorized.', user.username));
+                    this.newPlayer(socket, user);
+                }
             });
+        });
+
+        socket.on('registration', data => {
+            let user = new PModel({username: data.username});
+            user.save((err, user) => {
+                if (err) {
+                    logger.info(format('Registration failed. Message: %s',
+                        err.message));
+                } else {
+                    logger.info(format('%s registered.', user.username));
+                }
+
+                socket.emit('registration', {
+                    successfully: !err
+                });
+            });
+        });
+    }
+
+    newPlayer(socket, user) {
+        let player = new Player(socket, user);
+
+        this.__players.set(player.username, player);
+
+        this.__io.emit('update-online', {
+                pOnline: this.__players.size
         });
     }
 
@@ -55,7 +90,8 @@ class Server {
             });
         } else {
             let result = Array.from(this.__globalTopScore).reduce((min, current) => {
-                return current.score < min.score ? current : min;
+                return current.score < min.score || (current.score === min.score &&
+                    current.time > min. time) ? current : min;
             });
 
             if (result.score < player.lastScore) {
