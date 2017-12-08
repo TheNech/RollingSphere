@@ -140,6 +140,7 @@
 		</div>
 	</div>
 	<div id="score"><p>Score: 0</p></div>
+	<div id="coins"><p>Coins: 0</p></div>
 	<script type="text/javascript" src="./js/game.js"></script>
 	<script type="text/javascript">
 		var socket = io('http://localhost:8080');
@@ -151,6 +152,12 @@
 		});
 		socket.on('player-disconnected', function(data) {
 			console.log('Player was disconnected. Id: ' + data.id + "\tCurrent number of players is " + data.pNumber);
+		});
+
+		socket.on('new-global-top-score', function(data){
+			console.log('new-global-top-score');
+  			console.log(data);
+  			console.log();
 		});
 	</script>
 </body>
