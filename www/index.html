@@ -28,13 +28,17 @@
 		</form>		
 	</div>
 
-	<script type="text/javascript">
-		var nick = $('#inputNickname').val();
-		var pass = $('#inputPassword').val();
+	<script type="text/javascript">		
 
 		$("#btnEnter").on('click', (function() {
-			socket.emit('auth', { username: nick, password: pass });					
-		}));		
+
+			var nick = $('#inputNickname').val();
+			var pass = $('#inputPassword').val();
+
+			socket.emit('auth', { username: nick, password: pass });		
+
+		}));
+
 		
 		$("#inputs").trigger('reset');		
 	</script>
@@ -56,30 +60,40 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button id="btnRegRegistr" class="btn btn-primary active" type="button">Registration</button>
-					<button id="btnRegClose" class="btn btn-danger active" type="button" data-dismiss="modal">Close</button>
+					<button id="btnRegRegistr" class="btn btn-primary" type="button">Registration</button>
+					<button id="btnRegClose" class="btn btn-danger" type="button" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<script type="text/javascript">
+
 		$('#btnReg').on('click', function () {
 			$('#modalBoxReg').modal('show');
 		});
 
 		$('#btnRegRegistr').on('click', function () {
-			if ($('#inputNick').val().length == 0 || $('#inputPass').val().length == 0 || $('#inputRepeatPass').val().length == 0) {
-				alert('Not all fields are filled');
-				return;
+
+			var nick = $('#inputNick').val();
+			var pass = $('#inputPass').val();
+			var repeatPass = $('#inputRepeatPass').val();
+
+			if (nick.length == 0 || pass.length == 0 || repeatPass.length == 0) {
+				alert('Fields can not be empty');
+
+				return false;
 			}
 
-			if ($('#inputPass').val() != $('#inputRepeatPass').val()) {
+			if (pass != repeatPass) {
 				alert('Passwords do not match');
-				return;
-			}
+				
+				return false;
+			} else {
+				socket.emit('registration', { username: nick, password: pass, repeatPass: repeatPass });
+				$('#modalBoxReg').modal('hide');
+			}	
 
-			socket.emit('reg', { username: $('#inputNick').val(), password: $('#inputPass').val(), repeatPass: $('#inputRepeatPass').val() });
 		});
 
 		$('#inpReg').trigger('reset');

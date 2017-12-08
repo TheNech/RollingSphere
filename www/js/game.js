@@ -50,7 +50,7 @@ function gameOver () {
 
   var end = Date.now();
   SCORE = Math.floor(SCORE / 100);
-  socket.emit('end-game', { score: SCORE , time: end - start });  
+  socket.emit('game-over', { score: SCORE, coins: 0,  time: end - start });  
   
   $('#modalBoxResult').modal('show');
 
