@@ -67,28 +67,27 @@ function gameOver () {
 
   $('#modalBoxResult p:nth-child(1)').text("Score: " + SCORE);
   $('#modalBoxResult p:nth-child(2)').text("Coins: " + COINS);
-  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');
-  
+  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');  
+
   resetValues();
+  
+  // $('#btn-OK').one('click', function () {
 
-  $('#btn-OK').one('click', function () {
+  //   $('#score p').fadeOut(50);
+  //   $('#coins p').fadeOut(50);
+  //   $('#modalBoxResult').modal('hide');
+  //   $('#mainScreen').fadeIn(50);
+  //   document.getElementById('mainScreen').style.position = "absolute";
 
-    $('#score p').fadeOut(50);
-    $('#coins p').fadeOut(50);
-    $('#modalBoxResult').modal('hide');
-    $('#mainScreen').fadeIn(50);
-    document.getElementById('mainScreen').style.position = "absolute";
-
-  });  
+  // });  
 
   $('#btn-restart').one('click', function () {
-
+    
     $('#modalBoxResult').modal('hide');
-    $('#mainScreen').fadeOut(50);
+    document.getElementById('score').style.visibility = "visible";
+    document.getElementById('coins').style.visibility = "visible";
     $('#score p').text("Score: " + SCORE);
-    $('#score p').fadeIn(50);
-    $('#coins p').text("Coins: " + SCORE);
-    $('#coins p').fadeIn(50);
+    $('#coins p').text("Coins: " + COINS);
 
     startBarierLogic();
     start = Date.now();
@@ -116,6 +115,8 @@ function resetValues () {
   COINS_BALANCE = 0;
   COINS_BALANCE_ROAD = 0;
   coins = [];
+  document.getElementById('score').style.visibility = "hidden";
+  document.getElementById('coins').style.visibility = "hidden";
 }
 
 function onWindowResize () {
