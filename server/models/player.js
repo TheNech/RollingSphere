@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-let PlayerSchema = mongoose.Schema({
+const PlayerSchema = mongoose.Schema({
     username: {
         type: String,
         unique: true,

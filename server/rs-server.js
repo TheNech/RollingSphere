@@ -1,15 +1,15 @@
-const app = require('http').createServer(require('./static-handler'));
-const io = require('socket.io')(app);
-const config = require('./config');
-const logger = config.logger;
-const format = require('util').format;
-const db = require('./database');
-const PModel = require('./models/player');
-const Player = require('./player-wrapper');
+const app = require('http').createServer(require('./static-handler')), // eslint-disable-line no-mixed-requires
+    io = require('socket.io')(app),
+    config = require('./config'),
+    format = require('util').format,
+    db = require('./database'), // eslint-disable-line no-unused-vars
+    PModel = require('./models/player'),
+    Player = require('./player-wrapper'),
+    logger = config.logger;
 
 
 class Server {
-    constructor(io) {
+    constructor () {
         logger.info('Server starting...');
 
         this.__io = io;
@@ -23,32 +23,35 @@ class Server {
         this.__startServer();
     }
 
-    __startServer(port) {
+    __startServer () { // eslint-disable-line class-methods-use-this
         app.listen(config.port);
         logger.info(format('Server started. Listening port %d.', config.port));
     }
 
-    newConnection(socket) {
+    newConnection (socket) {
         socket.on('auth', (data) => {
             PModel.findOne({username: data.username}, (err, user) => {
                 socket.emit('auth', {
-                    successfully: (!err && user) ? true : false
+                    successfully: (!err && user)
+                        ? true // eslint-disable-line no-unneeded-ternary
+                        : false
                 });
 
                 if (err) {
-                    logger.error('Error in auth handler! Message: ' + err.message);
-                } else if (!user) {
-                    logger.info(format('%s authorization failed.', data.username));
-                } else {
+                    logger.error('Error in auth handler! Message: ', err.message);
+                } else if (user) {
                     logger.info(format('%s authorized.', user.username));
                     this.newPlayer(socket, user);
+                } else {
+                    logger.info(format('%s authorization failed.', data.username));
                 }
             });
         });
 
-        socket.on('registration', data => {
-            let user = new PModel({username: data.username});
-            user.save((err, user) => {
+        socket.on('registration', (data) => {
+            const player = new PModel({username: data.username});
+
+            player.save((err, user) => {
                 if (err) {
                     logger.info(format('Registration failed. Message: %s',
                         err.message));
@@ -63,40 +66,43 @@ class Server {
         });
     }
 
-    newPlayer(socket, user) {
-        let player = new Player(socket, user);
+    newPlayer (socket, user) {
+        const player = new Player(socket, user);
 
         this.__players.set(player.username, player);
 
         this.__io.emit('update-online', {
-                pOnline: this.__players.size
+            pOnline: this.__players.size
         });
     }
 
-    playerDisconnect(player) {
+    playerDisconnect (player) {
         this.__players.delete(player.username);
 
         this.__io.emit('update-online', {
-                pOnline: this.__players.size
+            pOnline: this.__players.size
         });
     }
 
-    newScore(player) {
+    newScore (player) {
         if (this.__globalTopScore.size < 10) {
-            this.__globalTopScore.add({ 
+            this.__globalTopScore.add({
                 username: player.username,
                 score: player.lastScore,
                 time: Date.now()
             });
         } else {
-            let result = Array.from(this.__globalTopScore).reduce((min, current) => {
-                return current.score < min.score || (current.score === min.score &&
-                    current.time > min. time) ? current : min;
-            });
+            const result = Array.from(this.__globalTopScore)
+                .reduce((min, current) => {
+                    return current.score < min.score ||
+                        (current.score === min.score && current.time > min.time)
+                        ? current
+                        : min;
+                });
 
             if (result.score < player.lastScore) {
                 this.__globalTopScore.delete(result);
-                this.__globalTopScore.add({ 
+                this.__globalTopScore.add({
                     username: player.username,
                     score: player.lastScore,
                     time: Date.now()
@@ -106,7 +112,8 @@ class Server {
             }
         }
 
-        let top = [];
+        const top = [];
+
         this.__globalTopScore.forEach((item) => {
             top.push({
                 user: item.username,
@@ -118,4 +125,4 @@ class Server {
     }
 }
 
-module.exports = new Server(io);
+module.exports = new Server();
