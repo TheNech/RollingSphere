@@ -1,18 +1,19 @@
-const config = require('./config');
+const config = require('./config'),
+    mongoose = require('mongoose');
+
 const logger = config.logger;
-const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
 mongoose.connect(config.db, {
     useMongoClient: true
-}).catch(error => {
+}).catch(error => { // eslint-disable-line no-unused-vars
     // logger.error(error.message);
 });
 
 const db = mongoose.connection;
 
-db.on('error', err => {
+db.on('error', (err) => {
     logger.error(err.message);
 });
 

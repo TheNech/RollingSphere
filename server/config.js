@@ -19,7 +19,7 @@ log4js.configure({
 });
 
 module.exports = {
-    port: process.env.port || 8080,
+    port: process.env.PORT || 8080,
     logger: log4js.getLogger(),
     db: 'mongodb://localhost/rolling-sphere'
 };

@@ -1,21 +1,26 @@
-module.exports = (request, response) => {
-    let fs = require('fs');
+const fs = require('fs'),
+    path = require('path');
 
-    let path;
+const nfCode = 404, // eslint-disable-line one-var
+    okCode = 200,
+    path2nm = path.join(__dirname, '..', 'node_modules');
+
+module.exports = (request, response) => {
+    let fpath = null;
 
     if (request.url.split('/')[1] === 'bootstrap') {
-        
-        path = __dirname +  request.url.replace("/bootstrap", '/../node_modules/bootstrap/dist');
+        fpath = request.url.replace('/bootstrap',
+            path.join(path2nm, 'bootstrap', 'dist'));
 
-        fs.readFile(path, (error, data) => {
+        fs.readFile(fpath, (error, data) => {
             if (error) {
-                response.writeHead(404);
+                response.writeHead(nfCode);
                 response.end('Not found');
 
                 return;
             }
 
-            response.writeHead(200);
+            response.writeHead(okCode);
             response.end(data);
         });
 
@@ -24,39 +29,41 @@ module.exports = (request, response) => {
 
     switch (request.url) {
         case '/':
-            path = __dirname + '/../www/index.html';
+            fpath = path.join(__dirname, '..', 'www', 'index.html');
             break;
 
         case '/lib/jquery.min.js':
-            path = __dirname + '/../node_modules/jquery/dist/jquery.min.js';
+            fpath = path.join(path2nm, 'jquery', 'dist', 'jquery.min.js');
             break;
 
         case '/lib/socket.io.js':
-            path = __dirname + '/../node_modules/socket.io-client/dist/socket.io.js';
+            fpath = path.join(path2nm, 'socket.io-client', 'dist',
+                'socket.io.js');
             break;
 
         case '/lib/three.min.js':
-            path = __dirname + '/../node_modules/three/build/three.min.js';
+            fpath = path.join(path2nm, 'three', 'build', 'three.min.js');
             break;
 
         case '/lib/OrbitControls.js':
-            path = __dirname + '/../node_modules/three/examples/js/controls/OrbitControls.js';
+            fpath = path.join(path2nm, 'three', 'examples', 'js', 'controls',
+                'OrbitControls.js');
             break;
 
-        default :
-            path = __dirname + '/../www' + request.url;
+        default:
+            fpath = path.join(__dirname, '..', 'www', request.url);
             break;
     }
 
-    fs.readFile(path, (error, data) => {
+    fs.readFile(fpath, (error, data) => {
         if (error) {
-            response.writeHead(404);
+            response.writeHead(nfCode);
             response.end('Not found');
 
             return;
         }
 
-        response.writeHead(200);
+        response.writeHead(okCode);
         response.end(data);
     });
 };
