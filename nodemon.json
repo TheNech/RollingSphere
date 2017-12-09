@@ -1,0 +1,11 @@
+{
+    "verbose": true,
+    "watch": [
+        "./index.js",
+        "./server/"
+    ],
+    "env": {
+        "PORT": 8080,
+        "NODE_ENV": "development"
+    }
+}
