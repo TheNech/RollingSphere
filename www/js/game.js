@@ -188,16 +188,17 @@ function createSpotlights () {
       targetGeometry = {},
       targetMaterial = {};
 
-  for(var i = 0; i < 5; i++) {
+  for(var i = 4; i < 5; i++) {
     targetGeometry = new THREE.BoxGeometry(1, 1, 1);
     targetMaterial = new THREE.MeshNormalMaterial();
     target = new THREE.Mesh(targetGeometry, targetMaterial);
-    target.position.set(0, 2, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5));
-    target.visible = false;
+    // target.position.set(0, 2, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5));
+    target.position.set(0, 2, 200);
+    target.visible = true;
     scene.add(target);
 
-    spotLight = new THREE.SpotLight(0xFFFFFF, 2);
-    spotLight.position.set(150, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5), -200);
+    spotLight = new THREE.SpotLight(0xFFFFFF, 1);
+    spotLight.position.set(150, 550, -200);
     spotLight.castShadow = true;
     spotLight.shadow.camera.near.shadowCameraNear = 10;
     //spotLight.shadowCameraVisible = false;
@@ -268,7 +269,7 @@ var BoxesOne = function () {
   this.mesh = new THREE.Object3D();
 
   var objectGeometry = new THREE.BoxGeometry(5, 2, 5, 11);
-  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x42f474/*, shading: THREE.FlatShading*/});
 
   //create 1st conus
   objectGeometry = new THREE.BoxGeometry(5, 4, 5, 11);
