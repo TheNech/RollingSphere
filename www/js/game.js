@@ -269,7 +269,7 @@ var BoxesOne = function () {
   this.mesh = new THREE.Object3D();
 
   var objectGeometry = new THREE.BoxGeometry(5, 2, 5, 11);
-  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x42f474/*, shading: THREE.FlatShading*/});
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
 
   //create 1st conus
   objectGeometry = new THREE.BoxGeometry(5, 4, 5, 11);
