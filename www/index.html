@@ -29,6 +29,7 @@
 	</div>
 
 	<script type="text/javascript">		
+		var socket = io('http://localhost:8080');
 
 		$("#btnEnter").on('click', (function() {
 
@@ -37,6 +38,9 @@
 
 			socket.emit('auth', { username: nick, password: pass });		
 
+			$('#overlay-start').fadeOut(50);
+			$('#mainScreen').fadeIn(50);
+			document.getElementById('mainScreenElements').style.visibility = "visible";
 		}));
 
 		
@@ -81,13 +85,11 @@
 
 			if (nick.length == 0 || pass.length == 0 || repeatPass.length == 0) {
 				alert('Fields can not be empty');
-
 				return false;
 			}
 
 			if (pass != repeatPass) {
-				alert('Passwords do not match');
-				
+				alert('Passwords do not match');				
 				return false;
 			} else {
 				socket.emit('registration', { username: nick, password: pass, repeatPass: repeatPass });
@@ -119,12 +121,22 @@
 	</div>
 
 	<div id="mainScreen">
-		<div id="btnStartGame">
-			<button type="button" class="btn btn-primary">Start Game</button>
+		<div id="mainScreenElements">
+			<h1 id="mainScreenTitle">Rolling Sphere</h1>
+			<div id="mainScreenOnline">
+				<p>Online: </p>
+			</div>
+			<div id="mainScreenStatistic">				
+				<p>Nickname: </p>
+				<p>Best score: </p>
+				<p>Coins: </p>					
+			</div>
+
+			<div id="btnStartGame">
+				<button type="button" class="btn btn-primary">Play</button>
+			</div>			
 		</div>
-		<div>
-			
-		</div>
+		
 	</div>
 
 		

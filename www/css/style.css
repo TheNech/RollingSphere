@@ -59,15 +59,50 @@ body,
     height: 100%;
     overflow: auto;
 }
+#mainScreenElements {
+    visibility: hidden;
+}
+#mainScreenTitle {
+    visibility: inherit;
+    color: #00FFFF;
+    font-size: 60px;
+    margin-top: 1%;
+    font-family: "Algerian";
+    text-align: center;
+}
+#mainScreenOnline {
+    visibility: inherit;
+    width: 20%;
+}
+#mainScreenOnline p {
+    color: #FFFFFF;
+    font-size: 20px;
+    margin: 0 auto;
+    margin-left: 2%;
+    font-family: "mv boli";
+}
+#mainScreenStatistic {
+    visibility: inherit;
+    width: 30%;
+    margin: 0 auto;
+    margin-top: 5%;
+    margin-right: none;
+    text-align: left;
+}
+#mainScreenStatistic p {
+    color: #FFFFFF;
+    font-size: 25px;
+    font-family: "mv boli";
+}
 #mainScreen button {
     font-family: "Algerian";
     font-size: 30px;
 }
 #btnStartGame {
-    margin: 0;
+    margin: 0 auto;
     position: absolute;
-    visibility: hidden;
-    top: 5%;
+    visibility: inherit;
+    top: 75%;
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
