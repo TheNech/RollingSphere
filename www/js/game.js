@@ -194,7 +194,7 @@ function createSpotlights () {
     target = new THREE.Mesh(targetGeometry, targetMaterial);
     // target.position.set(0, 2, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5));
     target.position.set(0, 2, 200);
-    target.visible = true;
+    target.visible = false;
     scene.add(target);
 
     spotLight = new THREE.SpotLight(0xFFFFFF, 1);
@@ -660,7 +660,7 @@ function initGame () {
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
   controls.enablePan = false;
-  controls.enableZoom = true;
+  controls.enableZoom = false;
   controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
   controls.maxPolarAngle = 1.55;
