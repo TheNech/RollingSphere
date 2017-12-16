@@ -1,85 +1,87 @@
-const format = require('util').format;
-const logger = require('./config').logger;
-const mongoose = require('mongoose');
-
+const format = require('util').format,
+    logger = require('./config').logger,
+    Messages = require('./messages');
 
 module.exports = class PlayerWrapper {
-    constructor(socket, player) {
-
+    constructor (socket, player) {
+        this.__socket = socket;
         this.__player = player;
-
         this.__lastScore = 0;
 
-        socket.emit('authorized', { 
-            bestScore: this.bestScore,
-            timeInGame: this.timeInGame,
-            numberOfCoins: this.numberOfCoins
-        });
+        Messages.sendAuthRes(null, true, this);
 
-        socket.on('disconnect', () => {
+        this.socket.on('disconnect', () => {
             this.__disconnect();
         });
 
-        socket.on('game-over', (data) => {
+        this.socket.on('get-player-data', () => {
+            Messages.sendPlayerData(this);
+        });
+
+        this.socket.on('game-over', (data) => {
             this.__gameOver(data);
         });
 
         logger.info(format('Player %s connected.', this.username));
     }
 
-    __disconnect() {
+    __disconnect () {
         logger.info(format('Player %s disconnected.', this.username));
 
         this.__player.save();
         this.server.playerDisconnect(this);
     }
 
-    __gameOver(data) {
+    __gameOver (data) {
         this.__player.time += data.time;
         this.__player.coins += data.coins;
-        
+
         this.__lastScore = data.score;
 
         if (this.bestScore < this.lastScore) {
             this.__player.bestscore = this.lastScore;
         }
 
-        logger.info(format('%s finished the game. Score: %d. Coins: %d. Time: %ds %dms.',
-            this.username, data.coins, data.score, 
-            Math.floor(data.time/1000), data.time%1000));
+        logger.info(format('%s finished the game. Score: %d. Coins: %d. ' +
+            'Time: %ds %dms.', this.username, data.score, data.coins,
+            Math.floor(data.time / 1000), data.time % 1000)); // eslint-disable-line indent
 
         this.server.newScore(this);
     }
 
     save () {
-        this.__player.save(err => {
+        this.__player.save((err) => {
             if (err) {
                 logger.error(err.message);
             }
         });
     }
 
-    get timeInGame() {
+    get timeInGame () {
         return this.__player.time;
     }
 
-    get bestScore() {
+    get bestScore () {
         return this.__player.bestscore;
     }
 
-    get lastScore() {
+    get lastScore () {
         return this.__lastScore;
     }
 
-    get numberOfCoins() {
+    get numberOfCoins () {
         return this.__player.coins;
     }
 
-    get username() {
+    get username () {
         return this.__player.username;
     }
 
-    get server() {
-        return require('./rs-server');
+    get socket () {
+        return this.__socket;
+    }
+
+    get server () { // eslint-disable-line class-methods-use-this
+        return require('./rs-server'); // eslint-disable-line global-require
     }
 };
