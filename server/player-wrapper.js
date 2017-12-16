@@ -1,22 +1,24 @@
 const format = require('util').format,
-    logger = require('./config').logger;
+    logger = require('./config').logger,
+    Messages = require('./messages');
 
 module.exports = class PlayerWrapper {
     constructor (socket, player) {
+        this.__socket = socket;
         this.__player = player;
         this.__lastScore = 0;
 
-        socket.emit('authorized', {
-            bestScore: this.bestScore,
-            timeInGame: this.timeInGame,
-            numberOfCoins: this.numberOfCoins
-        });
+        Messages.sendAuthRes(null, true, this);
 
-        socket.on('disconnect', () => {
+        this.socket.on('disconnect', () => {
             this.__disconnect();
         });
 
-        socket.on('game-over', (data) => {
+        this.socket.on('get-player-data', () => {
+            Messages.sendPlayerData(this);
+        });
+
+        this.socket.on('game-over', (data) => {
             this.__gameOver(data);
         });
 
@@ -75,7 +77,11 @@ module.exports = class PlayerWrapper {
         return this.__player.username;
     }
 
-    static get server () {
+    get socket () {
+        return this.__socket;
+    }
+
+    get server () { // eslint-disable-line class-methods-use-this
         return require('./rs-server'); // eslint-disable-line global-require
     }
 };

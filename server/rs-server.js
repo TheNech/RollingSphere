@@ -5,6 +5,7 @@ const app = require('http').createServer(require('./static-handler')), // eslint
     db = require('./database'), // eslint-disable-line no-unused-vars
     PModel = require('./models/player'),
     Player = require('./player-wrapper'),
+    Messages = require('./messages'),
     logger = config.logger;
 
 
@@ -31,12 +32,6 @@ class Server {
     newConnection (socket) {
         socket.on('auth', (data) => {
             PModel.findOne({username: data.username}, (err, user) => {
-                socket.emit('auth', {
-                    successfully: (!err && user)
-                        ? true // eslint-disable-line no-unneeded-ternary
-                        : false
-                });
-
                 if (err) {
                     logger.error('Error in auth handler! Message: ', err.message);
                 } else if (user) {
@@ -59,9 +54,7 @@ class Server {
                     logger.info(format('%s registered.', user.username));
                 }
 
-                socket.emit('registration', {
-                    successfully: !err
-                });
+                Messages.sendRegisterRes(socket, !err);
             });
         });
     }
@@ -71,17 +64,13 @@ class Server {
 
         this.__players.set(player.username, player);
 
-        this.__io.emit('update-online', {
-            pOnline: this.__players.size
-        });
+        Messages.sendUpdateOnline(this.__players.size);
     }
 
     playerDisconnect (player) {
         this.__players.delete(player.username);
 
-        this.__io.emit('update-online', {
-            pOnline: this.__players.size
-        });
+        Messages.sendUpdateOnline(this.__players.size);
     }
 
     newScore (player) {
@@ -121,8 +110,14 @@ class Server {
             });
         });
 
-        this.__io.emit('update-top-score', top);
+        Messages.sendUpdateTopScore(top);
+    }
+
+    get io () {
+        return this.__io;
     }
 }
 
-module.exports = new Server();
+const server = new Server();
+
+module.exports = server;
