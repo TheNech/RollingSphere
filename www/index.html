@@ -21,6 +21,7 @@
 		<form id="inputs">			
 			<input id="inputNickname" class="form-control" name="nickname" placeholder="Your nickname">
 			<input id="inputPassword" class="form-control" name="password" placeholder="Your password" type="password">
+			<div id="validationAuth"></div>
 			<div id="buttons">
 				<button id="btnReg" class="btn-link active" type="button">Registration</button>
 				<button id="btnEnter" class="btn btn-primary" type="button">Login</button>	
@@ -28,19 +29,52 @@
 		</form>		
 	</div>
 
-	<script type="text/javascript">		
-		var socket = io('http://localhost:8080');
+	<script type="text/javascript">	
+
+		var bestScore, numberOfCoins, timeInGame;
 
 		$("#btnEnter").on('click', (function() {
 
-			var nick = $('#inputNickname').val();
-			var pass = $('#inputPassword').val();
+			var nick = $('#inputNickname').val(),
+				pass = $('#inputPassword').val();
 
-			socket.emit('auth', { username: nick, password: pass });		
+			if (nick.length == 0 || pass.length == 0) {
+				document.getElementById('validationAuth').style.display = 'block';
+				document.getElementById('validationAuth').innerHTML = 'Not all fields are filled';
+			} else {
+				socket.emit('auth', { username: nick, password: pass });						
+			}
 
-			$('#overlay-start').fadeOut(50);
-			$('#mainScreen').fadeIn(50);
-			document.getElementById('mainScreenElements').style.visibility = "visible";
+			socket.on('auth', function (data) {
+				if (data.successfully) {
+
+					socket.on('authorized', function (data) {
+
+						$('#overlay-start').fadeOut(50);
+						$('#mainScreen').fadeIn(50);
+						document.getElementById('mainScreenElements').style.visibility = "visible";
+
+						bestScore = data.bestScore;
+						numberOfCoins = data.numberOfCoins;
+						timeInGame = data.timeInGame;
+						$('#mainScreenStatistic p:nth-child(1)').text('Nickname: ' + nick);
+						$('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestScore);
+						$('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + numberOfCoins);
+						$('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(timeInGame / 1000) + 's');
+					});
+
+					socket.on('update-online', function (data) {
+						$('#mainScreenOnline p').text('Online: ' + data.pOnline);
+					});
+
+					socket.on('update-top-score', function (data) {
+						console.log('top score');
+					});
+				} else {
+					document.getElementById('validationAuth').style.display = 'block';
+					document.getElementById('validationAuth').innerHTML = 'Authorization failed';
+				}
+			});
 		}));
 
 		
@@ -62,11 +96,12 @@
 						<input id="inputPass" class="form-control" name="password" placeholder="Your password" type="password">	
 						<input id="inputRepeatPass" class="form-control" name="repeatPass" placeholder="Repeat your password" type="password">
 					</form>
-				</div>
+					<div id="validationReg"></div>
+				</div>				
 				<div class="modal-footer">
 					<button id="btnRegRegistr" class="btn btn-primary" type="button">Registration</button>
 					<button id="btnRegClose" class="btn btn-danger" type="button" data-dismiss="modal">Close</button>
-				</div>
+				</div>			
 			</div>
 		</div>
 	</div>
@@ -79,23 +114,30 @@
 
 		$('#btnRegRegistr').on('click', function () {
 
-			var nick = $('#inputNick').val();
-			var pass = $('#inputPass').val();
-			var repeatPass = $('#inputRepeatPass').val();
+			var nick = $('#inputNick').val(),
+				pass = $('#inputPass').val(),
+				repeatPass = $('#inputRepeatPass').val();
 
 			if (nick.length == 0 || pass.length == 0 || repeatPass.length == 0) {
-				alert('Fields can not be empty');
-				return false;
+				document.getElementById('validationReg').style.display = 'block';
+				document.getElementById('validationReg').innerHTML = 'Fields must not be empty'; 
+			} else {
+				if (pass != repeatPass) {
+					document.getElementById('validationReg').style.display = 'block';
+					document.getElementById('validationReg').innerHTML = 'Passwords do not match';
+				} else {
+					socket.emit('registration', { username: nick, password: pass });					
+				}	
 			}
 
-			if (pass != repeatPass) {
-				alert('Passwords do not match');				
-				return false;
-			} else {
-				socket.emit('registration', { username: nick, password: pass, repeatPass: repeatPass });
-				$('#modalBoxReg').modal('hide');
-			}	
-
+			socket.on('registration', function (data) {
+				if (data.successfully) {
+					$('#modalBoxReg').modal('hide');											
+				} else {
+					document.getElementById('validationReg').style.display = 'block';
+					document.getElementById('validationReg').innerHTML = 'Registration failed';
+				}
+			});
 		});
 
 		$('#inpReg').trigger('reset');
@@ -126,11 +168,43 @@
 			<div id="mainScreenOnline">
 				<p>Online: </p>
 			</div>
+			
 			<div id="mainScreenStatistic">				
 				<p>Nickname: </p>
 				<p>Best score: </p>
-				<p>Coins: </p>					
+				<p>Coins: </p>	
+				<p>Total time: </p>				
 			</div>
+			<div id="mainScreenTop">
+				<table>
+					<caption>Top</caption>
+					<tr>
+						<td>1</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</div>			
 
 			<div id="btnStartGame">
 				<button type="button" class="btn btn-primary">Play</button>
@@ -139,15 +213,6 @@
 		
 	</div>
 
-		
-	<div id ="overlay-gameover">
-		<div class="message-container">
-			<p><font color="Boston University Red" face="Algerian">Game over!</font></p>
-			<p><font size="7" color="" face="Algerian">Score: </font></p>
-			<button id="btn-returnMainMenu">Main menu</button>
-			<button id="btn-restart">Play again</button>
-		</div>
-	</div>
 	<div id="score"><p>Score: 0</p></div>
 	<div id="coins"><p>Coins: 0</p></div>
 	<script type="text/javascript" src="./js/game.js"></script>

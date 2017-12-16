@@ -2,7 +2,6 @@ html,
 body,
 #container,
 #overlay-start {
-    /*background-color: #000000;*/
     font-weight: 700;
     overflow: hidden;
     position: relative;
@@ -81,18 +80,49 @@ body,
     margin-left: 2%;
     font-family: "mv boli";
 }
+#containerStatTop {
+    display: table;
+    width: 100%;
+}
 #mainScreenStatistic {
     visibility: inherit;
-    width: 30%;
+    width: 40%;
     margin: 0 auto;
     margin-top: 5%;
-    margin-right: none;
+    margin-left: 20%;
     text-align: left;
+    display: inline-block;
+    float: left;
 }
 #mainScreenStatistic p {
     color: #FFFFFF;
-    font-size: 25px;
+    font-size: 35px;
     font-family: "mv boli";
+}
+#mainScreenTop {
+    display: inline-block;
+    float: right;
+    text-align: center;
+    margin: 0 auto;
+    width: 40%;
+}
+#mainScreenTop table {
+    border-spacing: 10px;
+    border-collapse: separate;
+    border: none;
+}
+#mainScreenTop caption, td {
+    text-align: center;
+    color: #FFFFFF;
+    font-family: "mv boli";
+}
+#mainScreenTop caption {
+    font-size: 35px;
+}
+#mainScreenTop td {
+    width: 10%;
+    padding: 0;
+    font-size: 25px;
 }
 #mainScreen button {
     font-family: "Algerian";
@@ -102,7 +132,7 @@ body,
     margin: 0 auto;
     position: absolute;
     visibility: inherit;
-    top: 75%;
+    top: 90%;
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
@@ -143,4 +173,16 @@ body,
 }
 #btnRegRegistr {
     float: left;
+}
+#validationAuth,
+#validationReg {
+    display: none;
+    border: 1px solid;
+    margin: 10px 0px;
+    text-align: center;
+    padding: 5px 10px 5px 10px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    color: #D63301;
+    background-color: #FFCCBA;
 }

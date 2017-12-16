@@ -71,12 +71,20 @@ function gameOver () {
   $('#modalBoxResult p:nth-child(2)').text("Coins: " + COINS);
   $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');  
 
-  
+  if (SCORE > bestScore) {
+    bestScore = SCORE;
+  }
+  numberOfCoins += COINS;
+  timeInGame += (end - start);
   $('#btn-OK').one('click', function () {
 
     $('#modalBoxResult').modal('hide');
     $('#mainScreen').fadeIn(50);
     document.getElementById('mainScreen').style.position = "absolute"; 
+
+    $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestScore);
+    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + numberOfCoins);
+    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(timeInGame / 1000) + 's');    
 
   });  
 
