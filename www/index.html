@@ -31,7 +31,7 @@
 
 	<script type="text/javascript">	
 
-		var bestScore, numberOfCoins, timeInGame;
+		var bestscore, Coins, time;
 
 		$("#btnEnter").on('click', (function() {
 
@@ -48,28 +48,22 @@
 			socket.on('auth', function (data) {
 				if (data.successfully) {
 
-					socket.on('authorized', function (data) {
+					$('#overlay-start').fadeOut(50);
+					$('#mainScreen').fadeIn(50);
+					document.getElementById('mainScreenElements').style.visibility = "visible";
 
-						$('#overlay-start').fadeOut(50);
-						$('#mainScreen').fadeIn(50);
-						document.getElementById('mainScreenElements').style.visibility = "visible";
-
-						bestScore = data.bestScore;
-						numberOfCoins = data.numberOfCoins;
-						timeInGame = data.timeInGame;
-						$('#mainScreenStatistic p:nth-child(1)').text('Nickname: ' + nick);
-						$('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestScore);
-						$('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + numberOfCoins);
-						$('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(timeInGame / 1000) + 's');
-					});
-
+					bestscore = data.bestscore;
+					Coins = data.coins;
+					time = data.time;
+					$('#mainScreenStatistic p:nth-child(1)').text('Nickname: ' + nick);
+					$('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
+					$('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
+					$('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');
+					
 					socket.on('update-online', function (data) {
 						$('#mainScreenOnline p').text('Online: ' + data.pOnline);
-					});
+					});				
 
-					socket.on('update-top-score', function (data) {
-						console.log('top score');
-					});
 				} else {
 					document.getElementById('validationAuth').style.display = 'block';
 					document.getElementById('validationAuth').innerHTML = 'Authorization failed';
@@ -175,42 +169,19 @@
 				<p>Coins: </p>	
 				<p>Total time: </p>				
 			</div>
-			<div id="mainScreenTop">
-				<table>
-					<caption>Top</caption>
-					<tr>
-						<td>1</td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>3</td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>4</td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td>5</td>
-						<td></td>
-						<td></td>
-					</tr>
-				</table>
-			</div>			
+			<table id="mainScreenTop">
+				<caption>Top</caption>
+				<tr><td></td><td></td><td></td></tr>
+				<tr><td></td><td></td><td></td></tr>
+				<tr><td></td><td></td><td></td></tr>
+				<tr><td></td><td></td><td></td></tr>
+				<tr><td></td><td></td><td></td></tr>
+			</table>		
 
 			<div id="btnStartGame">
 				<button type="button" class="btn btn-primary">Play</button>
 			</div>			
-		</div>
-		
+		</div>		
 	</div>
 
 	<div id="score"><p>Score: 0</p></div>

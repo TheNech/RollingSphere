@@ -80,10 +80,6 @@ body,
     margin-left: 2%;
     font-family: "mv boli";
 }
-#containerStatTop {
-    display: table;
-    width: 100%;
-}
 #mainScreenStatistic {
     visibility: inherit;
     width: 40%;
@@ -100,17 +96,22 @@ body,
     font-family: "mv boli";
 }
 #mainScreenTop {
+    visibility: hidden;
     display: inline-block;
     float: right;
     text-align: center;
     margin: 0 auto;
     width: 40%;
-}
-#mainScreenTop table {
+
     border-spacing: 10px;
     border-collapse: separate;
     border: none;
 }
+/*#mainScreenTop table {
+    border-spacing: 10px;
+    border-collapse: separate;
+    border: none;
+}*/
 #mainScreenTop caption, td {
     text-align: center;
     color: #FFFFFF;

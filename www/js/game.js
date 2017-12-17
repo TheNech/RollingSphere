@@ -66,25 +66,47 @@ function gameOver () {
   $('#modalBoxResult').modal('show');
   document.getElementById('score').style.visibility = "hidden";
   document.getElementById('coins').style.visibility = "hidden";
+  document.getElementById('mainScreenTop').style.visibility = "visible";
 
   $('#modalBoxResult p:nth-child(1)').text("Score: " + SCORE);
   $('#modalBoxResult p:nth-child(2)').text("Coins: " + COINS);
   $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');  
 
-  if (SCORE > bestScore) {
-    bestScore = SCORE;
+  socket.on('update-top-score', function (data) {             
+
+    var arrTop = [];
+    for (var i = 0; i < data.scores.length; i++) {
+      arrTop[i] = data.scores[i];
+    }
+
+    arrTop.sort(function (a, b) {
+      return a.score - b.score;
+    });
+  
+    arrTop.reverse();
+
+    for (var i = 0; i < arrTop.length; i++) {
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(arrTop[i].user);
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(arrTop[i].score);
+    }
+  });
+
+  if (SCORE > bestscore) {
+    bestscore = SCORE;
   }
-  numberOfCoins += COINS;
-  timeInGame += (end - start);
+  Coins += COINS;
+  time += (end - start);
+
   $('#btn-OK').one('click', function () {
 
     $('#modalBoxResult').modal('hide');
     $('#mainScreen').fadeIn(50);
     document.getElementById('mainScreen').style.position = "absolute"; 
 
-    $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestScore);
-    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + numberOfCoins);
-    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(timeInGame / 1000) + 's');    
+    $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
+    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
+    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');    
 
   });  
 
