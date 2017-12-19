@@ -107,11 +107,6 @@ body,
     border-collapse: separate;
     border: none;
 }
-/*#mainScreenTop table {
-    border-spacing: 10px;
-    border-collapse: separate;
-    border: none;
-}*/
 #mainScreenTop caption, td {
     text-align: center;
     color: #FFFFFF;
@@ -178,12 +173,20 @@ body,
 #validationAuth,
 #validationReg {
     display: none;
+    text-align: center;
+}
+.validation {
     border: 1px solid;
     margin: 10px 0px;
-    text-align: center;
     padding: 5px 10px 5px 10px;
     background-repeat: no-repeat;
     background-position: 10px center;
-    color: #D63301;
-    background-color: #FFCCBA;
+}
+.success {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+}
+.error {
+    color: #D8000C;
+    background-color: #FFBABA;
 }

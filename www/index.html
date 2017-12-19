@@ -21,7 +21,7 @@
 		<form id="inputs">			
 			<input id="inputNickname" class="form-control" name="nickname" placeholder="Your nickname">
 			<input id="inputPassword" class="form-control" name="password" placeholder="Your password" type="password">
-			<div id="validationAuth"></div>
+			<div id="validationAuth" class="validation"></div>
 			<div id="buttons">
 				<button id="btnReg" class="btn-link active" type="button">Registration</button>
 				<button id="btnEnter" class="btn btn-primary" type="button">Login</button>	
@@ -38,9 +38,13 @@
 			var nick = $('#inputNickname').val(),
 				pass = $('#inputPassword').val();
 
+			nick.trim();
+			pass.trim();
+
 			if (nick.length == 0 || pass.length == 0) {
 				document.getElementById('validationAuth').style.display = 'block';
 				document.getElementById('validationAuth').innerHTML = 'Not all fields are filled';
+				$('#validationAuth').addClass('error');
 			} else {
 				socket.emit('auth', { username: nick, password: pass });						
 			}
@@ -66,11 +70,11 @@
 
 				} else {
 					document.getElementById('validationAuth').style.display = 'block';
-					document.getElementById('validationAuth').innerHTML = 'Authorization failed';
+					document.getElementById('validationAuth').innerHTML = 'Authorization failed! Please enter correct data';
+					$('#validationAuth').addClass('error');
 				}
 			});
 		}));
-
 		
 		$("#inputs").trigger('reset');		
 	</script>
@@ -90,7 +94,7 @@
 						<input id="inputPass" class="form-control" name="password" placeholder="Your password" type="password">	
 						<input id="inputRepeatPass" class="form-control" name="repeatPass" placeholder="Repeat your password" type="password">
 					</form>
-					<div id="validationReg"></div>
+					<div id="validationReg" class="validation"></div>
 				</div>				
 				<div class="modal-footer">
 					<button id="btnRegRegistr" class="btn btn-primary" type="button">Registration</button>
@@ -112,24 +116,45 @@
 				pass = $('#inputPass').val(),
 				repeatPass = $('#inputRepeatPass').val();
 
+			nick.trim();
+			pass.trim();
+			repeatPass.trim();
+			
 			if (nick.length == 0 || pass.length == 0 || repeatPass.length == 0) {
 				document.getElementById('validationReg').style.display = 'block';
-				document.getElementById('validationReg').innerHTML = 'Fields must not be empty'; 
+				document.getElementById('validationReg').innerHTML = 'Fields must not be empty';
+				$('#validationReg').addClass('error');
 			} else {
-				if (pass != repeatPass) {
+				if (nick.length < 3 || nick.length > 15) {
 					document.getElementById('validationReg').style.display = 'block';
-					document.getElementById('validationReg').innerHTML = 'Passwords do not match';
+					document.getElementById('validationReg').innerHTML = 'Nickname must be more than 3 and less than 15 characters';
+					$('#validationReg').addClass('error');
 				} else {
-					socket.emit('registration', { username: nick, password: pass });					
-				}	
+					if (pass.length < 5) {
+						document.getElementById('validationReg').style.display = 'block';
+						document.getElementById('validationReg').innerHTML = 'Password must be at least 5 characters';
+						$('#validationReg').addClass('error');
+					} else {
+						if (pass != repeatPass) {
+							document.getElementById('validationReg').style.display = 'block';
+							document.getElementById('validationReg').innerHTML = 'Passwords do not match';
+							$('#validationReg').addClass('error');
+							} else {
+								socket.emit('registration', { username: nick, password: pass });
+							}
+					}					
+				}
 			}
 
 			socket.on('registration', function (data) {
 				if (data.successfully) {
-					$('#modalBoxReg').modal('hide');											
+					document.getElementById('validationReg').style.display = 'block';
+					document.getElementById('validationReg').innerHTML = 'You are successfully registered';
+					$('#validationReg').addClass('success');									
 				} else {
 					document.getElementById('validationReg').style.display = 'block';
-					document.getElementById('validationReg').innerHTML = 'Registration failed';
+					document.getElementById('validationReg').innerHTML = 'Registration failed! User with such a nickname already exists';
+					$('#validationReg').addClass('error');	
 				}
 			});
 		});
