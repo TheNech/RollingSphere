@@ -7,8 +7,9 @@ mongoose.Promise = global.Promise;
 
 mongoose.connect(config.db, {
     useMongoClient: true
-}).catch(error => { // eslint-disable-line no-unused-vars
-    // logger.error(error.message);
+}).catch(() => {
+    logger.info('Exiting...');
+    process.exit(0);
 });
 
 const db = mongoose.connection;

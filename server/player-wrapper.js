@@ -46,6 +46,7 @@ module.exports = class PlayerWrapper {
             'Time: %ds %dms.', this.username, data.score, data.coins,
             Math.floor(data.time / 1000), data.time % 1000)); // eslint-disable-line indent
 
+        this.save();
         this.server.newScore(this);
     }
 
