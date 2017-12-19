@@ -134,6 +134,10 @@ class Server {
         Messages.sendUpdateTopScore(this.__top.array);
     }
 
+    get topArray () {
+        return this.__top.array;
+    }
+
     get io () {
         return this.__io;
     }
