@@ -34,24 +34,27 @@ class Server {
             PModel.findOne({username: data.username}, (err, user) => {
                 if (err) {
                     logger.error('Error in auth handler! Message: ', err.message);
-                } else if (user) {
-                    logger.info(format('%s authorized.', user.username));
+                } else if (user && user.checkPassword(data.password)) {
+                    logger.info(format('Auth success. User: %s', user.username));
                     this.newPlayer(socket, user);
                 } else {
-                    logger.info(format('%s authorization failed.', data.username));
+                    logger.info(format('Auth failed. User: %s', data.username));
                 }
             });
         });
 
         socket.on('registration', (data) => {
-            const player = new PModel({username: data.username});
+            const player = new PModel({
+                username: data.username,
+                password: data.password
+            });
 
             player.save((err, user) => {
                 if (err) {
-                    logger.info(format('Registration failed. Message: %s',
-                        err.message));
+                    logger.info(format('Registration failed. User: %s. Message: %s',
+                        data.username, err.message));
                 } else {
-                    logger.info(format('%s registered.', user.username));
+                    logger.info(format('Registration success. User: %s', user.username));
                 }
 
                 Messages.sendRegisterRes(socket, !err);
