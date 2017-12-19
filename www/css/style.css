@@ -96,13 +96,11 @@ body,
     font-family: "mv boli";
 }
 #mainScreenTop {
-    visibility: hidden;
     display: inline-block;
     float: right;
     text-align: center;
     margin: 0 auto;
     width: 40%;
-
     border-spacing: 10px;
     border-collapse: separate;
     border: none;
@@ -114,6 +112,15 @@ body,
 }
 #mainScreenTop caption {
     font-size: 35px;
+}
+#mainScreenTop tr:nth-child(1) {
+    background-color: #FFD700;
+}
+#mainScreenTop tr:nth-child(2) {
+    background-color: #C0C0C0;
+}
+#mainScreenTop tr:nth-child(3) {
+    background-color: #CD7F32;
 }
 #mainScreenTop td {
     width: 10%;

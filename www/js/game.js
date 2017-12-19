@@ -66,30 +66,19 @@ function gameOver () {
   $('#modalBoxResult').modal('show');
   document.getElementById('score').style.visibility = "hidden";
   document.getElementById('coins').style.visibility = "hidden";
-  document.getElementById('mainScreenTop').style.visibility = "visible";
 
   $('#modalBoxResult p:nth-child(1)').text("Score: " + SCORE);
   $('#modalBoxResult p:nth-child(2)').text("Coins: " + COINS);
   $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');  
 
-  socket.on('update-top-score', function (data) {             
+  socket.on('update-top-score', function (data) {
 
-    var arrTop = [];
-    for (var i = 0; i < data.scores.length; i++) {
-      arrTop[i] = data.scores[i];
-    }
-
-    arrTop.sort(function (a, b) {
-      return a.score - b.score;
-    });
-  
-    arrTop.reverse();
-
-    for (var i = 0; i < arrTop.length; i++) {
+    data.scores.forEach(function (item, i) {
       $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(arrTop[i].user);
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(arrTop[i].score);
-    }
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(item.username);
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(item.score);
+    });
+
   });
 
   if (SCORE > bestscore) {

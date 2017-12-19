@@ -63,7 +63,13 @@
 					$('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
 					$('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
 					$('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');
-					
+
+					data.topscores.forEach(function (item, i) {
+				      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
+				      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(item.username);
+				      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(item.score);
+				    });
+
 					socket.on('update-online', function (data) {
 						$('#mainScreenOnline p').text('Online: ' + data.pOnline);
 					});				
@@ -150,7 +156,12 @@
 				if (data.successfully) {
 					document.getElementById('validationReg').style.display = 'block';
 					document.getElementById('validationReg').innerHTML = 'You are successfully registered';
-					$('#validationReg').addClass('success');									
+					if ($('#validationReg').hasClass('error')) {
+						$('#validationReg').removeClass('error');
+						$('#validationReg').addClass('success');									
+					} else {
+						$('#validationReg').addClass('success');
+					}
 				} else {
 					document.getElementById('validationReg').style.display = 'block';
 					document.getElementById('validationReg').innerHTML = 'Registration failed! User with such a nickname already exists';
@@ -196,6 +207,8 @@
 			</div>
 			<table id="mainScreenTop">
 				<caption>Top</caption>
+				<tr><td></td><td></td><td></td></tr>
+				<tr><td></td><td></td><td></td></tr>
 				<tr><td></td><td></td><td></td></tr>
 				<tr><td></td><td></td><td></td></tr>
 				<tr><td></td><td></td><td></td></tr>
