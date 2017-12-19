@@ -4,6 +4,7 @@ const app = require('http').createServer(require('./static-handler')), // eslint
     format = require('util').format,
     db = require('./database'), // eslint-disable-line no-unused-vars
     PModel = require('./models/player'),
+    TSModel = require('./models/top-score'),
     Player = require('./player-wrapper'),
     Messages = require('./messages'),
     logger = config.logger;
@@ -15,7 +16,7 @@ class Server {
 
         this.__io = io;
         this.__players = new Map();
-        this.__globalTopScore = new Set();
+        this.__top = null;
 
         this.__io.on('connection', (socket) => {
             this.newConnection(socket);
@@ -25,8 +26,25 @@ class Server {
     }
 
     __startServer () { // eslint-disable-line class-methods-use-this
-        app.listen(config.port);
-        logger.info(format('Server started. Listening port %d.', config.port));
+        TSModel
+            .findOne({name: 'topscore'}, (err, top) => {
+                if (err) {
+                    logger.warn(`Error in finding topscore. Message: ${err.message}`);
+                }
+
+                if (top) {
+                    this.__top = top;
+                } else {
+                    this.__top = new TSModel({name: 'topscore'});
+                    this.__top.save();
+                }
+
+                this.__globalTopScore = new Set(this.__top.array);
+            })
+            .then(() => {
+                app.listen(config.port);
+                logger.info(format('Server started. Listening port %d.', config.port));
+            });
     }
 
     newConnection (socket) {
@@ -77,43 +95,43 @@ class Server {
     }
 
     newScore (player) {
-        if (this.__globalTopScore.size < 10) {
-            this.__globalTopScore.add({
-                username: player.username,
-                score: player.lastScore,
-                time: Date.now()
-            });
-        } else {
-            const result = Array.from(this.__globalTopScore)
-                .reduce((min, current) => {
-                    return current.score < min.score ||
-                        (current.score === min.score && current.time > min.time)
-                        ? current
-                        : min;
-                });
-
-            if (result.score < player.lastScore) {
-                this.__globalTopScore.delete(result);
-                this.__globalTopScore.add({
-                    username: player.username,
-                    score: player.lastScore,
-                    time: Date.now()
-                });
+        if (this.__top.array.length >= 7) {
+            if (this.__top.array[this.__top.array.length - 1].score < player.lastScore) {
+                this.__top.array.pop();
             } else {
                 return;
             }
         }
 
-        const top = [];
-
-        this.__globalTopScore.forEach((item) => {
-            top.push({
-                user: item.username,
-                score: item.score
-            });
+        this.__top.array.push({
+            username: player.username,
+            score: player.lastScore,
+            time: Date.now()
         });
 
-        Messages.sendUpdateTopScore(top);
+        this.__top.array.sort((a, b) => {
+            if (a.score < b.score) {
+                return 1;
+            }
+
+            if (a.score > b.score) {
+                return -1;
+            }
+
+            if (a.time > b.time) {
+                return 1;
+            }
+
+            if (a.time < b.time) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        this.__top.save();
+
+        Messages.sendUpdateTopScore(this.__top.array);
     }
 
     get io () {
