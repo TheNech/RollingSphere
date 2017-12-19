@@ -7,6 +7,8 @@ const TopScoreSchema = mongoose.Schema({
         unique: true
     },
     array: []
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model('top', TopScoreSchema);
