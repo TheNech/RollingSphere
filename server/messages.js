@@ -9,7 +9,8 @@ module.exports = {
                 successfully: true,
                 bestscore: player.bestScore,
                 time: player.timeInGame,
-                coins: player.numberOfCoins
+                coins: player.numberOfCoins,
+                topscores: server().topArray
             });
         } else {
             socket.emit('auth', {
