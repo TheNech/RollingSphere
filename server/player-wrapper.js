@@ -78,6 +78,10 @@ module.exports = class PlayerWrapper {
         return this.__player.username;
     }
 
+    get regDate () {
+        return this.__player.createdAt;
+    }
+
     get socket () {
         return this.__socket;
     }
