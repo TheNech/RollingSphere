@@ -44,17 +44,12 @@ function render () {
   globalRenderID = requestAnimationFrame(render);
 
   barier.forEach( function ( element, index ) {
-      // if(barier[index + 1] && barier[index].position.z == barier[index + 1].position.z) {
-      //   animateTwoConuses(barier[index], barier[index + 1]);
-      //   index++;
-      // } else 
       animateConuses(barier[index]);
   });
   coins.forEach( function (element) {
     animateCoins(element);
   });
   animateHero();
-  //console.log(barier.length);
   renderer.render(scene, camera);
 }
 
@@ -62,20 +57,61 @@ function gameOver () {
   cancelAnimationFrame(globalRenderID);
   window.clearInterval(powerupSpawnIntervalID);
   window.clearInterval(powerupSpeedCounterIntervalID);
-  window.clearInterval(jumping);
+  window.clearInterval(jumping);  
 
   var end = Date.now();
   SCORE = Math.floor(SCORE / 100);
-  $('#overlay-gameover').fadeIn(100);
-  $('.message-container p:nth-child(2)').text("Score: " + SCORE);
-  socket.emit('end-game', { score: SCORE , time: end - start, coins: COINS });
-  $('#score p').fadeOut(50);  
-  $('#coins p').fadeOut(50);
+  socket.emit('game-over', { score: SCORE, coins: COINS,  time: end - start });  
+  
+  $('#modalBoxResult').modal('show');
+  document.getElementById('score').style.visibility = "hidden";
+  document.getElementById('coins').style.visibility = "hidden";
+
+  $('#modalBoxResult p:nth-child(1)').text("Score: " + SCORE);
+  $('#modalBoxResult p:nth-child(2)').text("Coins: " + COINS);
+  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');  
+
+  socket.on('update-top-score', function (data) {
+
+    data.scores.forEach(function (item, i) {
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(item.username);
+      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(item.score);
+    });
+
+  });
+
+  if (SCORE > bestscore) {
+    bestscore = SCORE;
+  }
+  Coins += COINS;
+  time += (end - start);
+
+  $('#btn-OK').one('click', function () {
+
+    $('#modalBoxResult').modal('hide');
+    $('#mainScreen').fadeIn(50);
+    document.getElementById('mainScreen').style.position = "absolute"; 
+
+    $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
+    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
+    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');    
+
+  });  
 
   $('#btn-restart').one('click', function () {
-    $('#overlay-gameover').fadeOut(50);
+    
     resetValues();
+    $('#modalBoxResult').modal('hide');
+    document.getElementById('score').style.visibility = "visible";
+    document.getElementById('coins').style.visibility = "visible";
+    $('#score p').text("Score: " + SCORE);
+    $('#coins p').text("Coins: " + COINS);
+
+    render();
     startBarierLogic();
+    start = Date.now();
+
   });
 }
 
@@ -89,7 +125,6 @@ function resetValues () {
   barier = [];
   hero.position.x = 0;
   hero.position.y = 3;
-  render();
   INTERVAL = 1000;
   SCORE = 0;
   JUMP = false;
@@ -98,11 +133,7 @@ function resetValues () {
   COINS = 0;
   COINS_BALANCE = 0;
   COINS_BALANCE_ROAD = 0;
-  coins = [];
-  $('#score p').text("Score: " + SCORE);
-  $('#score p').fadeIn(50);
-  $('#coins p').text("Coins: " + SCORE);
-  $('#coins p').fadeIn(50);
+  coins = [];  
 }
 
 function onWindowResize () {
@@ -470,14 +501,35 @@ function runGame () {
 $('#overlay-start').fadeIn(100);
 
 var start;
-$('#btnEnter').one('click', function() {
-  $('#overlay-start').fadeOut(50);
+function startGame () {
+  $('#mainScreen').fadeOut(50);
+  document.getElementById('score').style.visibility = "visible";
+  document.getElementById('coins').style.visibility = "visible";
+
   initGame();
   runGame();
 
-  $(document).ready(function() {
-    $("#modalBox").modal('hide');
-  });
-
   start = Date.now();
+}
+
+var firstGame = true;
+$('#btnStartGame').on('click', function () {
+  if (firstGame) {
+    firstGame = false;
+    startGame();
+  } else {
+    resetValues();
+    $('#btn-restart').unbind('click');
+    $('#modalBoxResult').modal('hide');
+    document.getElementById('score').style.visibility = "visible";
+    document.getElementById('coins').style.visibility = "visible";
+    $('#score p').text("Score: " + SCORE);
+    $('#coins p').text("Coins: " + COINS);
+
+    $('#mainScreen').fadeOut(50);
+
+    render();
+    startBarierLogic();
+    start = Date.now(); 
+  }
 });
