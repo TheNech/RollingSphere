@@ -47,10 +47,19 @@ module.exports = {
         });
     },
 
-    sendChatMessage (message, player) {
-        player.socket.broadcast.to(config.ioAuthRoomName).emit('chat-message', {
+    sendChatMessage (message, from) {
+        from.socket.broadcast.to(config.ioAuthRoomName).emit('chat-message', {
             message,
-            user: player.username
+            user: from.username,
+            private: false
+        });
+    },
+
+    sendPrivateChatMessage (message, from, to) {
+        to.socket.emit('chat-message', {
+            message,
+            user: from.username,
+            private: true
         });
     }
 };

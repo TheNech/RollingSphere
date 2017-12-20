@@ -7,6 +7,7 @@ const app = require('http').createServer(require('./static-handler')), // eslint
     TSModel = require('./models/top-score'),
     Player = require('./player-wrapper'),
     Messages = require('./messages'),
+    Chat = require('./chat-handler'),
     logger = config.logger;
 
 class Server {
@@ -86,6 +87,8 @@ class Server {
 
         this.__players.set(player.username, player);
 
+        Chat(player);
+
         Messages.sendUpdateOnline(this.__players.size);
     }
 
@@ -133,6 +136,10 @@ class Server {
         this.__top.save();
 
         Messages.sendUpdateTopScore(this.__top.array);
+    }
+
+    getPlayer (username) {
+        return this.__players.get(username);
     }
 
     get topArray () {
