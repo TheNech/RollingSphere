@@ -22,10 +22,6 @@ module.exports = class PlayerWrapper {
             this.__gameOver(data);
         });
 
-        // this.socket.on('chat-message', (data) => {
-        //     Messages.sendChatMessage(data.message, this);
-        // });
-
         logger.info(format('Player %s connected.', this.username));
     }
 
@@ -80,6 +76,10 @@ module.exports = class PlayerWrapper {
 
     get username () {
         return this.__player.username;
+    }
+
+    get regDate () {
+        return this.__player.createdAt;
     }
 
     get socket () {

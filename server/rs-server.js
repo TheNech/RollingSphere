@@ -7,7 +7,7 @@ const app = require('http').createServer(require('./static-handler')), // eslint
     TSModel = require('./models/top-score'),
     Player = require('./player-wrapper'),
     Messages = require('./messages'),
-    Chat = require('./chat-handler'),
+    handleChatMsgs = require('./chat-handler'),
     logger = config.logger;
 
 class Server {
@@ -87,7 +87,7 @@ class Server {
 
         this.__players.set(player.username, player);
 
-        Chat(player);
+        handleChatMsgs(player);
 
         Messages.sendUpdateOnline(this.__players.size);
     }
