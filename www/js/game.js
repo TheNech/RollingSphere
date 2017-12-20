@@ -10,8 +10,8 @@ var PLANE_WIDTH = 60,
     JUMP = false,
     X_JUMP = 1,
     COINS = 0,
-    COINS_BALANCE = 0
-    COINS_BALANCE_ROAD = 0;
+    COINS_BALANCE = 0,
+    PARTS_NUMBER = 0;
 
 //переменные
 var axeshelper = {},
@@ -219,16 +219,17 @@ function createSpotlights () {
       targetGeometry = {},
       targetMaterial = {};
 
-  for(var i = 0; i < 5; i++) {
+  for(var i = 4; i < 5; i++) {
     targetGeometry = new THREE.BoxGeometry(1, 1, 1);
     targetMaterial = new THREE.MeshNormalMaterial();
     target = new THREE.Mesh(targetGeometry, targetMaterial);
-    target.position.set(0, 2, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5));
+    // target.position.set(0, 2, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5));
+    target.position.set(0, 2, 200);
     target.visible = false;
     scene.add(target);
 
-    spotLight = new THREE.SpotLight(0xFFFFFF, 2);
-    spotLight.position.set(150, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5), -200);
+    spotLight = new THREE.SpotLight(0xFFFFFF, 1);
+    spotLight.position.set(150, 550, -200);
     spotLight.castShadow = true;
     spotLight.shadow.camera.near.shadowCameraNear = 10;
     //spotLight.shadowCameraVisible = false;
@@ -279,11 +280,208 @@ var Conuses = function () {
   con4.receiveShadow = true;
   this.mesh.add(con4);
 
+  PARTS_NUMBER = this.mesh.children.length;
+
   //create coin
   if(COINS_BALANCE >= 3) {
     COINS_BALANCE = 0;
     objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
     objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700/*, shading: THREE.FlatShading*/});
+    var coin = new THREE.Mesh(objectGeometry, objectMaterial);
+    coin.position.x = 0;
+    coin.position.y = 4.25;
+    coin.rotation.x = 1.5;
+    this.mesh.add(coin);
+  }
+};
+
+var BoxesOne = function () {
+
+  this.mesh = new THREE.Object3D();
+
+  var objectGeometry = new THREE.BoxGeometry(5, 2, 5, 11);
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
+
+  //create 1st conus
+  objectGeometry = new THREE.BoxGeometry(5, 4, 5, 11);
+  var b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 0;
+  b.position.y = -0.35;
+  b.rotation.y = 1;
+  b.rotation.z = 0.5;
+  this.mesh.add(b);
+  
+  objectGeometry = new THREE.BoxGeometry(3, 3, 4, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 4;
+  b.position.y = -0.5;
+  b.rotation.y = -0.85;
+  b.position.z = 0.5;
+  this.mesh.add(b);
+
+  objectGeometry = new THREE.BoxGeometry(3.5, 3.5, 4, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = -4;
+  b.position.y = -0.25;
+  b.rotation.y = 0.25;
+  b.position.z = -0.1;
+  this.mesh.add(b);
+
+  objectGeometry = new THREE.BoxGeometry(3, 3.5, 4, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 7;
+  b.position.y = -0.5;
+  b.rotation.z = -0.25;
+  b.position.z = 0.5;
+  this.mesh.add(b);
+
+  objectGeometry = new THREE.BoxGeometry(2.75, 2.75, 4, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = -6.5;
+  b.position.y = -1.35;
+  b.rotation.y = -0.45;
+  b.rotation.x = -0.25;
+  b.position.z = -0.1;
+  this.mesh.add(b);
+
+  PARTS_NUMBER = this.mesh.children.length;
+
+  //create coin
+  if(COINS_BALANCE >= 3) {
+    COINS_BALANCE = 0;
+    objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
+    objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700/*, shading: THREE.FlatShading*/});
+    var coin = new THREE.Mesh(objectGeometry, objectMaterial);
+    coin.position.x = 0;
+    coin.position.y = 4.25;
+    coin.rotation.x = 1.5;
+    this.mesh.add(coin);
+  }
+};
+
+var BoxesTwo = function () {
+
+  this.mesh = new THREE.Object3D();
+
+  var objectGeometry = new THREE.BoxGeometry(5, 2, 5, 11);
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
+  // var objectMaterial = new THREE.MeshLambertMaterial({color: 0xeecbad/*, shading: THREE.FlatShading*/});
+
+  //create 1st conus
+  objectGeometry = new THREE.BoxGeometry(5, 4, 5, 11);
+  var b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 2.3;
+  b.position.y = -0.35;
+  b.rotation.y = -0.2;
+  b.rotation.z = -0.3;
+  this.mesh.add(b);
+  
+  objectGeometry = new THREE.BoxGeometry(5, 4.5, 5, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = -2.3;
+  b.position.y = -0.8;
+  b.rotation.y = -0.5;
+  b.rotation.z = 0.4;
+  this.mesh.add(b);
+  
+  objectGeometry = new THREE.BoxGeometry(4, 4, 5, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 6.25;
+  b.position.y = -0.8;
+  b.rotation.y = 0.5;
+  b.rotation.z = 0.4;
+  this.mesh.add(b);  
+
+  objectGeometry = new THREE.BoxGeometry(4, 3.5, 5, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = -6.25;
+  b.position.y = -0.3;
+  b.position.z = 0.75;
+  b.rotation.y = -0.5;
+  b.rotation.z = 0.1;
+  this.mesh.add(b);  
+
+  objectGeometry = new THREE.BoxGeometry(4, 3.5, 5, 11);
+  b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = -6.25;
+  b.position.y = -0.3;
+  b.position.z = 0.75;
+  b.rotation.y = -0.5;
+  b.rotation.z = 0.1;
+  this.mesh.add(b);  
+
+  PARTS_NUMBER = this.mesh.children.length;
+
+  //create coin
+  if(COINS_BALANCE >= 3) {
+    COINS_BALANCE = 0;
+    objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
+    objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700, shading: THREE.FlatShading});
+    var coin = new THREE.Mesh(objectGeometry, objectMaterial);
+    coin.position.x = 0;
+    coin.position.y = 4.25;
+    coin.rotation.x = 1.5;
+    this.mesh.add(coin);
+  }
+};
+
+var BoxesThree = function () {
+
+  this.mesh = new THREE.Object3D();
+
+  var objectGeometry = new THREE.BoxGeometry(5, 2, 5, 11);
+  var objectMaterial = new THREE.MeshLambertMaterial({color: 0x29B6F6/*, shading: THREE.FlatShading*/});
+  // var objectMaterial = new THREE.MeshLambertMaterial({color: 0xeecbad/*, shading: THREE.FlatShading*/});
+
+  //create 1st conus
+  objectGeometry = new THREE.BoxGeometry(3.2, 2.5, 3.2, 11);
+  var b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 0;
+  b.position.z = 1.5;
+  b.position.y = -1;
+  b.rotation.y = 0.5;
+  this.mesh.add(b);
+  
+  objectGeometry = new THREE.BoxGeometry(4, 4, 4, 11);
+  var b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 2.5;
+  b.position.z = -2;
+  b.position.y = -0.35;
+  b.rotation.y = 0.5;
+  b.rotation.z = 0.3;
+  this.mesh.add(b);
+
+  objectGeometry = new THREE.BoxGeometry(4, 4.5, 4, 11);
+  var b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = -2.5;
+  b.position.z = -2;
+  b.rotation.y = -0.5;
+  b.rotation.z = -0.3;
+  this.mesh.add(b);
+
+  objectGeometry = new THREE.BoxGeometry(4, 3.5, 4.5, 11);
+  var b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = -5.5;
+  b.position.z = 1;
+  b.rotation.y = 0.3;
+  this.mesh.add(b);
+  
+  objectGeometry = new THREE.BoxGeometry(4, 4, 4.5, 11);
+  var b = new THREE.Mesh(objectGeometry, objectMaterial);
+  b.position.x = 5.45;
+  b.position.z = 1;
+  b.position.y = -0.45;
+  b.rotation.y = -0.3;
+  b.rotation.z = -0.3;
+  this.mesh.add(b);
+  
+  PARTS_NUMBER = this.mesh.children.length;
+
+  //create coin
+  if(COINS_BALANCE >= 3) {
+    COINS_BALANCE = 0;
+    objectGeometry = new THREE.CylinderGeometry(2, 2, 1, 20);
+    objectMaterial = new THREE.MeshLambertMaterial({color: 0xFFD700, shading: THREE.FlatShading});
     var coin = new THREE.Mesh(objectGeometry, objectMaterial);
     coin.position.x = 0;
     coin.position.y = 4.25;
@@ -299,7 +497,7 @@ function getRandomInteger( min, max ) {
 function animateConuses(conus) { 
   conus.position.z += SPEED;
   conus.children.forEach(function (element, index) {
-    if(element.children.length > 4) {
+    if(element.children.length > PARTS_NUMBER) {
       element.children[element.children.length - 1].rotation.z += 0.1;
     }
   });
@@ -312,7 +510,7 @@ function animateConuses(conus) {
         if(hero.position.y < (conus.position.y + 4)) {  
          gameOver();
         } 
-        else if(element.children.length > 4) {
+        else if(element.children.length > PARTS_NUMBER) {
           element.children.pop();
           COINS++;
           $('#coins p').text("Coins: " + COINS);
@@ -329,7 +527,6 @@ function animateConuses(conus) {
   }
 
   SCORE += SPEED;
-
   $('#score p').text("Score: " + Math.floor(SCORE / 100));
 }
 
@@ -342,7 +539,17 @@ var boxConuses = function (number) {
   if(number === 1) {
     COINS_BALANCE++;
     var cons;
-    cons = new Conuses();
+    switch (getRandomInteger(0, 2)) {
+      case 0: 
+        cons = new BoxesOne();
+        break;
+      case 1: 
+        cons = new BoxesTwo();
+        break;
+      case 2: 
+        cons = new BoxesThree();
+        break;
+    }
     cons.mesh.position.x = 20 * getRandomInteger(-1, 1);
     this.mesh.add(cons.mesh);
   }
@@ -350,14 +557,35 @@ var boxConuses = function (number) {
     COINS_BALANCE++;
     var barPos = [-1, 0, 1];
     var pos = getRandomInteger(0, barPos.length - 1);
-    var con1 = new Conuses();
-
+    var con1;
+    switch (getRandomInteger(0, 2)) {
+      case 0: 
+        con1 = new BoxesOne();
+        break;
+      case 1: 
+        con1 = new BoxesTwo();
+        break;
+      case 2: 
+        con1 = new BoxesThree();
+        break;
+    }
     con1.mesh.position.x = 20 * barPos[pos];
     this.mesh.add(con1.mesh);
     barPos.splice(pos, 1);
 
     pos = getRandomInteger(0, barPos.length - 1);
-    var con2 = new Conuses();
+    var con2;
+    switch (getRandomInteger(0, 2)) {
+      case 0: 
+        con2 = new BoxesOne();
+        break;
+      case 1: 
+        con2 = new BoxesTwo();
+        break;
+      case 2: 
+        con2 = new BoxesThree();
+        break;
+    }
     con2.mesh.position.x = 20 * barPos[pos];
     this.mesh.add(con2.mesh);
   }
@@ -463,7 +691,7 @@ function initGame () {
   controls = new THREE.OrbitControls(camera, $container.get(0));
   controls.enableKeys = false;
   controls.enablePan = false;
-  controls.enableZoom = true;
+  controls.enableZoom = false;
   controls.enableRotate = false;
   controls.minPolarAngle = 1.55;
   controls.maxPolarAngle = 1.55;
