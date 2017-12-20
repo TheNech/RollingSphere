@@ -9,7 +9,6 @@ const app = require('http').createServer(require('./static-handler')), // eslint
     Messages = require('./messages'),
     logger = config.logger;
 
-
 class Server {
     constructor () {
         logger.info('Server starting...');
@@ -81,6 +80,8 @@ class Server {
     }
 
     newPlayer (socket, user) {
+        socket.join(config.ioAuthRoomName);
+
         const player = new Player(socket, user);
 
         this.__players.set(player.username, player);

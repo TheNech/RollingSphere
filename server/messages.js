@@ -1,3 +1,5 @@
+const config = require('./config');
+
 function server () {
     return require('./rs-server'); // eslint-disable-line global-require
 }
@@ -34,14 +36,21 @@ module.exports = {
     },
 
     sendUpdateOnline (number) {
-        server().io.emit('update-online', {
+        server().io.to(config.ioAuthRoomName).emit('update-online', {
             pOnline: number
         });
     },
 
     sendUpdateTopScore (top) {
-        server().io.emit('update-top-score', {
+        server().io.to(config.ioAuthRoomName).emit('update-top-score', {
             scores: top
+        });
+    },
+
+    sendChatMessage (message, player) {
+        player.socket.broadcast.to(config.ioAuthRoomName).emit('chat-message', {
+            message,
+            user: player.username
         });
     }
 };
