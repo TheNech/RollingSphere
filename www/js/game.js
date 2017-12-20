@@ -38,7 +38,12 @@ var axeshelper = {},
     scene = {},
     space = true,
     jumping = {},
-    coins = [];
+    coins = [],
+    timeOneSession = 0,
+    scoreOneSession = 0,
+    coinsOneSession = 0,
+    countContinue = 0,
+    continueFor = 50;
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
@@ -60,32 +65,26 @@ function gameOver () {
   window.clearInterval(jumping);  
 
   var end = Date.now();
+  timeOneSession += (end - start);
   SCORE = Math.floor(SCORE / 100);
-  socket.emit('game-over', { score: SCORE, coins: COINS,  time: end - start });  
-  
+  scoreOneSession += SCORE;
+  coinsOneSession += COINS;
+    
   $('#modalBoxResult').modal('show');
   document.getElementById('score').style.visibility = "hidden";
   document.getElementById('coins').style.visibility = "hidden";
 
-  $('#modalBoxResult p:nth-child(1)').text("Score: " + SCORE);
-  $('#modalBoxResult p:nth-child(2)').text("Coins: " + COINS);
-  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');  
+  $('#modalBoxResult p:nth-child(1)').text("Score: " + scoreOneSession);
+  $('#modalBoxResult p:nth-child(2)').text("Coins: " + coinsOneSession);
+  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor(timeOneSession / 1000) + 's');
+  $('#modalBoxResult p:nth-child(4)').text("Fine: " + (countContinue * continueFor));
 
-  socket.on('update-top-score', function (data) {
-
-    data.scores.forEach(function (item, i) {
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(item.username);
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(item.score);
-    });
-
-  });
-
-  if (SCORE > bestscore) {
-    bestscore = SCORE;
-  }
-  Coins += COINS;
-  time += (end - start);
+  socket.emit('game-over', {
+    score: scoreOneSession, 
+    coins: coinsOneSession - (countContinue * continueFor),  
+    time: timeOneSession
+  })
+  .emit('get-player-data');
 
   $('#btn-OK').one('click', function () {
 
@@ -93,14 +92,12 @@ function gameOver () {
     $('#mainScreen').fadeIn(50);
     document.getElementById('mainScreen').style.position = "absolute"; 
 
-    $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
-    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
-    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');    
+    document.getElementById('btn-continue').disabled = false;
 
   });  
 
   $('#btn-restart').one('click', function () {
-    
+
     resetValues();
     $('#modalBoxResult').modal('hide');
     document.getElementById('score').style.visibility = "visible";
@@ -111,6 +108,25 @@ function gameOver () {
     render();
     startBarierLogic();
     start = Date.now();
+
+    $('#btn-restart').unbind('click');
+
+  });
+
+  $('#btn-continue').one('click', function () {
+
+    resetValuesForContinue();
+
+    countContinue++;
+    $('#modalBoxResult').modal('hide');
+    document.getElementById('score').style.visibility = "visible";
+    document.getElementById('coins').style.visibility = "visible";
+    $('#score p').text("Score: " + scoreOneSession);
+    $('#coins p').text("Coins: " + COINS);
+
+    render();
+    startBarierLogic();
+    start = Date.now();      
 
   });
 }
@@ -133,7 +149,19 @@ function resetValues () {
   COINS = 0;
   COINS_BALANCE = 0;
   COINS_BALANCE_ROAD = 0;
-  coins = [];  
+  coins = [];
+  scoreOneSession = 0;
+  timeOneSession = 0;
+  coinsOneSession = 0;
+  countContinue = 0;
+  $('#btn-continue').unbind('click');
+}
+
+function resetValuesForContinue () {
+  JUMP = false;
+  X_JUMP = 0.25;
+  hero.position.y = 3;
+  COINS = 0;
 }
 
 function onWindowResize () {

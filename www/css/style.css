@@ -110,6 +110,9 @@ body,
     color: #FFFFFF;
     font-family: "mv boli";
 }
+#mainScreenTop tr {
+    background-color: #4286f4;
+}
 #mainScreenTop caption {
     font-size: 35px;
 }
@@ -174,8 +177,11 @@ body,
     font-family: "mv boli";
     font-size: 20px;
 }
-#btnRegRegistr {
-    float: left;
+#modalBoxResult button {
+    margin: 0 auto;
+}
+#modalBoxResult p:last-child {
+    color: #db0000;
 }
 #validationAuth,
 #validationReg {
