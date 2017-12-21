@@ -63,6 +63,7 @@
 					$('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
 					$('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
 					$('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');
+					// console.log('Auth: ' + Coins);
 
 					data.topscores.forEach(function (item, i) {
 				      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
@@ -87,9 +88,11 @@
 					    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + data.coins);
 					    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(data.time / 1000) + 's'); 
 
-					    if (data.coins < continueFor) {
+					    Coins = data.coins;
+					    // console.log('player-data: ' + Coins);
+					    if (Coins < continueFor) {
 					    	document.getElementById('btn-continue').disabled = true;
-					    	document.getElementById('btn-continue').title = 'You do not have enough coins';
+    						document.getElementById('btn-continue').title = 'You need more coins';
 					    } else {
 					    	$('#btn-continue').removeAttr('title');
 					    }
@@ -201,7 +204,6 @@
 					<h4 class="modal-title">Result</h4>
 				</div>
 				<div class="modal-body">
-					<p></p>
 					<p></p>
 					<p></p>
 					<p></p>

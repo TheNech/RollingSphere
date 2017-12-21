@@ -43,7 +43,7 @@ var axeshelper = {},
     scoreOneSession = 0,
     coinsOneSession = 0,
     countContinue = 0,
-    continueFor = 50;
+    continueFor = 5;
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
@@ -66,27 +66,33 @@ function gameOver () {
 
   var end = Date.now();
   timeOneSession += (end - start);
-  SCORE = Math.floor(SCORE / 100);
-  scoreOneSession += SCORE;
-  coinsOneSession += COINS;
+
+  if (Coins < continueFor) {
+    document.getElementById('btn-continue').disabled = true;
+    document.getElementById('btn-continue').title = 'You need more coins';
+  } else {
+    $('#btn-continue').removeAttr('title');
+  }
+  // console.log('gameOver(): ' + Coins);
     
   $('#modalBoxResult').modal('show');
   document.getElementById('score').style.visibility = "hidden";
   document.getElementById('coins').style.visibility = "hidden";
 
-  $('#modalBoxResult p:nth-child(1)').text("Score: " + scoreOneSession);
+  $('#modalBoxResult p:nth-child(1)').text("Score: " + Math.floor(scoreOneSession / 100));
   $('#modalBoxResult p:nth-child(2)').text("Coins: " + coinsOneSession);
   $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor(timeOneSession / 1000) + 's');
-  $('#modalBoxResult p:nth-child(4)').text("Fine: " + (countContinue * continueFor));
 
-  socket.emit('game-over', {
-    score: scoreOneSession, 
-    coins: coinsOneSession - (countContinue * continueFor),  
-    time: timeOneSession
-  })
-  .emit('get-player-data');
+  
 
   $('#btn-OK').one('click', function () {
+
+    socket.emit('game-over', {
+      score: Math.floor(scoreOneSession / 100), 
+      coins: coinsOneSession - (countContinue * continueFor),  
+      time: timeOneSession
+    })
+    .emit('get-player-data');
 
     $('#modalBoxResult').modal('hide');
     $('#mainScreen').fadeIn(50);
@@ -94,23 +100,33 @@ function gameOver () {
 
     document.getElementById('btn-continue').disabled = false;
 
+    $('#btn-continue').unbind('click');
+
   });  
 
   $('#btn-restart').one('click', function () {
+
+    // console.log('btn-restart: ' + Coins);
+    socket.emit('game-over', {
+      score: Math.floor(scoreOneSession / 100), 
+      coins: coinsOneSession - (countContinue * continueFor),  
+      time: timeOneSession
+    }); 
 
     resetValues();
     $('#modalBoxResult').modal('hide');
     document.getElementById('score').style.visibility = "visible";
     document.getElementById('coins').style.visibility = "visible";
-    $('#score p').text("Score: " + SCORE);
-    $('#coins p').text("Coins: " + COINS);
+    $('#score p').text("Score: " + scoreOneSession);
+    $('#coins p').text("Coins: " + coinsOneSession);
 
     render();
     startBarierLogic();
     start = Date.now();
 
     $('#btn-restart').unbind('click');
-
+    $('#btn-OK').unbind('click');
+    document.getElementById('btn-continue').disabled = false;
   });
 
   $('#btn-continue').one('click', function () {
@@ -118,16 +134,19 @@ function gameOver () {
     resetValuesForContinue();
 
     countContinue++;
+    Coins -= continueFor;
+
     $('#modalBoxResult').modal('hide');
     document.getElementById('score').style.visibility = "visible";
     document.getElementById('coins').style.visibility = "visible";
     $('#score p').text("Score: " + scoreOneSession);
-    $('#coins p').text("Coins: " + COINS);
+    $('#coins p').text("Coins: " + coinsOneSession);
 
     render();
     startBarierLogic();
     start = Date.now();      
 
+    document.getElementById('btn-continue').disabled = false;
   });
 }
 
@@ -162,6 +181,7 @@ function resetValuesForContinue () {
   X_JUMP = 0.25;
   hero.position.y = 3;
   COINS = 0;
+  $('#btn-OK').unbind('click');
 }
 
 function onWindowResize () {
@@ -540,8 +560,8 @@ function animateConuses(conus) {
         } 
         else if(element.children.length > PARTS_NUMBER) {
           element.children.pop();
-          COINS++;
-          $('#coins p').text("Coins: " + COINS);
+          coinsOneSession++;
+          $('#coins p').text("Coins: " + coinsOneSession);
         }    
       }
 
@@ -554,8 +574,8 @@ function animateConuses(conus) {
     barier.shift();
   }
 
-  SCORE += SPEED;
-  $('#score p').text("Score: " + Math.floor(SCORE / 100));
+  scoreOneSession += SPEED;
+  $('#score p').text("Score: " + Math.floor(scoreOneSession / 100));
 }
 
 var boxConuses = function (number) {
@@ -665,8 +685,8 @@ function animateCoins(coin) {
   coin.rotation.y -= 0.1;
 
   if((coin.position.z == hero.position.z - 2) && (coin.position.x == hero.position.x) && (hero.position.y <= coin.position.y + 1)) {
-    COINS++;
-    $('#coins p').text("Coins: " + COINS);
+    coinsOneSession++;
+    $('#coins p').text("Coins: " + coinsOneSession);
     scene.remove(coins[0]);
     coins.shift();
   }
