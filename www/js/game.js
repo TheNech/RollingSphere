@@ -43,7 +43,7 @@ var axeshelper = {},
     scoreOneSession = 0,
     coinsOneSession = 0,
     countContinue = 0,
-    continueFor = 5;
+    continueFor = 50;
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
@@ -73,7 +73,6 @@ function gameOver () {
   } else {
     $('#btn-continue').removeAttr('title');
   }
-  // console.log('gameOver(): ' + Coins);
     
   $('#modalBoxResult').modal('show');
   document.getElementById('score').style.visibility = "hidden";
@@ -82,8 +81,6 @@ function gameOver () {
   $('#modalBoxResult p:nth-child(1)').text("Score: " + Math.floor(scoreOneSession / 100));
   $('#modalBoxResult p:nth-child(2)').text("Coins: " + coinsOneSession);
   $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor(timeOneSession / 1000) + 's');
-
-  
 
   $('#btn-OK').one('click', function () {
 
@@ -106,12 +103,12 @@ function gameOver () {
 
   $('#btn-restart').one('click', function () {
 
-    // console.log('btn-restart: ' + Coins);
     socket.emit('game-over', {
       score: Math.floor(scoreOneSession / 100), 
       coins: coinsOneSession - (countContinue * continueFor),  
       time: timeOneSession
-    }); 
+    })
+    .emit('get-player-data'); 
 
     resetValues();
     $('#modalBoxResult').modal('hide');
@@ -146,6 +143,7 @@ function gameOver () {
     startBarierLogic();
     start = Date.now();      
 
+    $('#btn-restart').unbind('click');
     document.getElementById('btn-continue').disabled = false;
   });
 }

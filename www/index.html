@@ -28,86 +28,6 @@
 			</div>
 		</form>		
 	</div>
-
-	<script type="text/javascript">	
-
-		var bestscore, Coins, time;
-
-		$("#btnEnter").on('click', (function() {
-
-			var nick = $('#inputNickname').val(),
-				pass = $('#inputPassword').val();
-
-			nick.trim();
-			pass.trim();
-
-			if (nick.length == 0 || pass.length == 0) {
-				document.getElementById('validationAuth').style.display = 'block';
-				document.getElementById('validationAuth').innerHTML = 'Not all fields are filled';
-				$('#validationAuth').addClass('error');
-			} else {
-				socket.emit('auth', { username: nick, password: pass });						
-			}
-
-			socket.on('auth', function (data) {
-				if (data.successfully) {
-
-					$('#overlay-start').fadeOut(50);
-					$('#mainScreen').fadeIn(50);
-					document.getElementById('mainScreenElements').style.visibility = "visible";
-
-					bestscore = data.bestscore;
-					Coins = data.coins;
-					time = data.time;
-					$('#mainScreenStatistic p:nth-child(1)').text('Nickname: ' + nick);
-					$('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
-					$('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
-					$('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');
-					// console.log('Auth: ' + Coins);
-
-					data.topscores.forEach(function (item, i) {
-				      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
-				      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(item.username);
-				      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(item.score);
-				    });
-
-				    socket.on('update-top-score', function (data) {
-
-				      data.scores.forEach(function (item, i) {
-				        $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
-				        $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(item.username);
-				        $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(item.score);
-				      });
-
-				    })
-				    .on('update-online', function (data) {
-				    	$('#mainScreenOnline p').text('Online: ' + data.pOnline);
-				    })
-				    .on('player-data', function (data) {
-				    	$('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + data.bestscore);
-					    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + data.coins);
-					    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(data.time / 1000) + 's'); 
-
-					    Coins = data.coins;
-					    // console.log('player-data: ' + Coins);
-					    if (Coins < continueFor) {
-					    	document.getElementById('btn-continue').disabled = true;
-    						document.getElementById('btn-continue').title = 'You need more coins';
-					    } else {
-					    	$('#btn-continue').removeAttr('title');
-					    }
-				    });
-
-				} else {
-					document.getElementById('validationAuth').style.display = 'block';
-					document.getElementById('validationAuth').innerHTML = 'Authorization failed! Please enter correct data';
-					$('#validationAuth').addClass('error');
-				}
-			});
-		}));
-		
-		$("#inputs").trigger('reset');		
-	</script>
 	
 	<div id="modalBoxReg" class="modal fade" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
@@ -133,69 +53,6 @@
 			</div>
 		</div>
 	</div>
-
-	<script type="text/javascript">
-
-		$('#btnReg').on('click', function () {
-			$('#modalBoxReg').modal('show');
-		});
-
-		$('#btnRegRegistr').on('click', function () {
-
-			var nick = $('#inputNick').val(),
-				pass = $('#inputPass').val(),
-				repeatPass = $('#inputRepeatPass').val();
-
-			nick.trim();
-			pass.trim();
-			repeatPass.trim();
-			
-			if (nick.length == 0 || pass.length == 0 || repeatPass.length == 0) {
-				document.getElementById('validationReg').style.display = 'block';
-				document.getElementById('validationReg').innerHTML = 'Fields must not be empty';
-				$('#validationReg').addClass('error');
-			} else {
-				if (nick.length < 3 || nick.length > 15) {
-					document.getElementById('validationReg').style.display = 'block';
-					document.getElementById('validationReg').innerHTML = 'Nickname must be more than 3 and less than 15 characters';
-					$('#validationReg').addClass('error');
-				} else {
-					if (pass.length < 5) {
-						document.getElementById('validationReg').style.display = 'block';
-						document.getElementById('validationReg').innerHTML = 'Password must be at least 5 characters';
-						$('#validationReg').addClass('error');
-					} else {
-						if (pass != repeatPass) {
-							document.getElementById('validationReg').style.display = 'block';
-							document.getElementById('validationReg').innerHTML = 'Passwords do not match';
-							$('#validationReg').addClass('error');
-							} else {
-								socket.emit('registration', { username: nick, password: pass });
-							}
-					}					
-				}
-			}
-
-			socket.on('registration', function (data) {
-				if (data.successfully) {
-					document.getElementById('validationReg').style.display = 'block';
-					document.getElementById('validationReg').innerHTML = 'You are successfully registered';
-					if ($('#validationReg').hasClass('error')) {
-						$('#validationReg').removeClass('error');
-						$('#validationReg').addClass('success');									
-					} else {
-						$('#validationReg').addClass('success');
-					}
-				} else {
-					document.getElementById('validationReg').style.display = 'block';
-					document.getElementById('validationReg').innerHTML = 'Registration failed! User with such a nickname already exists';
-					$('#validationReg').addClass('error');	
-				}
-			});
-		});
-
-		$('#inpReg').trigger('reset');
-	</script>
 
 	<div id="modalBoxResult" class="modal fade" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
@@ -250,24 +107,10 @@
 
 	<div id="score"><p>Score: 0</p></div>
 	<div id="coins"><p>Coins: 0</p></div>
-	<script type="text/javascript" src="./js/game.js"></script>
-	<script type="text/javascript">
-		var socket = io('http://localhost:8080');
-		socket.on('connected', function(data) {
-			console.log('My id : ' + data.id);
-		});
-		socket.on('new-player-connected', function(data) {
-			console.log('New player was connected. Id: ' + data.id + "\tCurrent number of players is " + data.pNumber);
-		});
-		socket.on('player-disconnected', function(data) {
-			console.log('Player was disconnected. Id: ' + data.id + "\tCurrent number of players is " + data.pNumber);
-		});
 
-		socket.on('new-global-top-score', function(data){
-			console.log('new-global-top-score');
-  			console.log(data);
-  			console.log();
-		});
-	</script>
+	<script type="text/javascript" src="./js/registration.js"></script>
+	<script type="text/javascript" src="./js/authorization.js"></script>
+	<script type="text/javascript" src="./js/game.js"></script>
+	<script type="text/javascript" src="./js/socket.js"></script>
 </body>
 </html>
