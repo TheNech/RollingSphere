@@ -1,8 +1,5 @@
 var socket = io('http://localhost:8080');
-socket.on('connected', function(data) {
-  console.log('My id : ' + data.id);
-})
-.on('new-player-connected', function(data) {
+socket.on('new-player-connected', function(data) {
   console.log('New player was connected. Id: ' + data.id + "\tCurrent number of players is " + data.pNumber);
 })
 .on('player-disconnected', function(data) {

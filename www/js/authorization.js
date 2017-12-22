@@ -6,9 +6,7 @@ $("#btnEnter").on('click', (function() {
       pass = $('#inputPassword').val().trim();
 
   if (nick.length == 0 || pass.length == 0) {
-    document.getElementById('validationAuth').style.display = 'block';
-    document.getElementById('validationAuth').innerHTML = 'Not all fields are filled';
-    $('#validationAuth').addClass('error');
+    messagesAuth('Not all fields are filled');
   } else {
       socket.emit('auth', { username: nick, password: pass });                        
   }
@@ -16,9 +14,7 @@ $("#btnEnter").on('click', (function() {
   socket.on('auth', function (data) {
 
     if (!data.successfully) {
-      document.getElementById('validationAuth').style.display = 'block';
-      document.getElementById('validationAuth').innerHTML = 'Authorization failed! Please enter correct data';
-      $('#validationAuth').addClass('error');
+      messagesAuth('Authorization failed! Please enter correct data');
 
       return;
     }
@@ -30,7 +26,7 @@ $("#btnEnter").on('click', (function() {
     bestscore = data.bestscore;
     Coins = data.coins;
     time = data.time;
-    
+
     $('#mainScreenStatistic p:nth-child(1)').text('Nickname: ' + nick);
     $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
     $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
@@ -82,3 +78,9 @@ $("#btnEnter").on('click', (function() {
 }));
 
 $("#inputs").trigger('reset');  
+
+function messagesAuth (message) {
+  document.getElementById('validationAuth').style.display = 'block';
+  document.getElementById('validationAuth').innerHTML = message;
+  $('#validationAuth').addClass('error');
+}
