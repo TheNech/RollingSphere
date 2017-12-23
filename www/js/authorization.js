@@ -7,14 +7,16 @@ $("#btnEnter").on('click', (function() {
 
   if (nick.length == 0 || pass.length == 0) {
     messagesAuth('Not all fields are filled');
-  } else {
-      socket.emit('auth', { username: nick, password: pass });                        
+
+    return;
   }
+   
+  socket.emit('auth', { username: nick, password: pass });
 
   socket.on('auth', function (data) {
 
     if (!data.successfully) {
-      messagesAuth('Authorization failed! Please enter correct data');
+      messagesAuth('Authorization failed!');
 
       return;
     }
