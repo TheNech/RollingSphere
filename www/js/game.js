@@ -99,6 +99,7 @@ function gameOver () {
 
     $('#btn-continue').unbind('click');
 
+    document.getElementById('container').style.display = 'none';
   });  
 
   $('#btn-restart').one('click', function () {
@@ -779,6 +780,7 @@ function startGame () {
   $('#mainScreen').fadeOut(50);
   document.getElementById('score').style.visibility = "visible";
   document.getElementById('coins').style.visibility = "visible";
+  document.getElementById('container').style.display = 'block';
 
   initGame();
   runGame();
@@ -797,6 +799,7 @@ $('#btnStartGame').on('click', function () {
     $('#modalBoxResult').modal('hide');
     document.getElementById('score').style.visibility = "visible";
     document.getElementById('coins').style.visibility = "visible";
+    document.getElementById('container').style.display = 'block';
     $('#score p').text("Score: " + SCORE);
     $('#coins p').text("Coins: " + COINS);
 
