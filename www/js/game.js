@@ -38,7 +38,12 @@ var axeshelper = {},
     scene = {},
     space = true,
     jumping = {},
-    coins = [];
+    coins = [],
+    timeOneSession = 0,
+    scoreOneSession = 0,
+    coinsOneSession = 0,
+    countContinue = 0,
+    continueFor = 50;
 
 function render () {
   globalRenderID = requestAnimationFrame(render);
@@ -60,58 +65,86 @@ function gameOver () {
   window.clearInterval(jumping);  
 
   var end = Date.now();
-  SCORE = Math.floor(SCORE / 100);
-  socket.emit('game-over', { score: SCORE, coins: COINS,  time: end - start });  
-  
+  timeOneSession += (end - start);
+
+  if (Coins < continueFor) {
+    document.getElementById('btn-continue').disabled = true;
+    document.getElementById('btn-continue').title = 'You need more coins';
+  } else {
+    $('#btn-continue').removeAttr('title');
+  }
+    
   $('#modalBoxResult').modal('show');
   document.getElementById('score').style.visibility = "hidden";
   document.getElementById('coins').style.visibility = "hidden";
 
-  $('#modalBoxResult p:nth-child(1)').text("Score: " + SCORE);
-  $('#modalBoxResult p:nth-child(2)').text("Coins: " + COINS);
-  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor((end - start) / 1000) + 's');  
-
-  socket.on('update-top-score', function (data) {
-
-    data.scores.forEach(function (item, i) {
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(1)').text(i + 1);
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(2)').text(item.username);
-      $('#mainScreenTop > tbody > tr:nth-child(' + (i + 1) + ') > td:nth-child(3)').text(item.score);
-    });
-
-  });
-
-  if (SCORE > bestscore) {
-    bestscore = SCORE;
-  }
-  Coins += COINS;
-  time += (end - start);
+  $('#modalBoxResult p:nth-child(1)').text("Score: " + Math.floor(scoreOneSession / 100));
+  $('#modalBoxResult p:nth-child(2)').text("Coins: " + coinsOneSession);
+  $('#modalBoxResult p:nth-child(3)').text("Time: " + Math.floor(timeOneSession / 1000) + 's');
 
   $('#btn-OK').one('click', function () {
+
+    socket.emit('game-over', {
+      score: Math.floor(scoreOneSession / 100), 
+      coins: coinsOneSession - (countContinue * continueFor),  
+      time: timeOneSession
+    })
+    .emit('get-player-data');
 
     $('#modalBoxResult').modal('hide');
     $('#mainScreen').fadeIn(50);
     document.getElementById('mainScreen').style.position = "absolute"; 
 
-    $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
-    $('#mainScreenStatistic p:nth-child(3)').text('Coins: ' + Coins);
-    $('#mainScreenStatistic p:nth-child(4)').text('Total time: ' + Math.floor(time / 1000) + 's');    
+    document.getElementById('btn-continue').disabled = false;
+
+    $('#btn-continue').unbind('click');
 
   });  
 
   $('#btn-restart').one('click', function () {
-    
+
+    socket.emit('game-over', {
+      score: Math.floor(scoreOneSession / 100), 
+      coins: coinsOneSession - (countContinue * continueFor),  
+      time: timeOneSession
+    })
+    .emit('get-player-data'); 
+
     resetValues();
     $('#modalBoxResult').modal('hide');
     document.getElementById('score').style.visibility = "visible";
     document.getElementById('coins').style.visibility = "visible";
-    $('#score p').text("Score: " + SCORE);
-    $('#coins p').text("Coins: " + COINS);
+    $('#score p').text("Score: " + scoreOneSession);
+    $('#coins p').text("Coins: " + coinsOneSession);
 
     render();
     startBarierLogic();
     start = Date.now();
 
+    $('#btn-restart').unbind('click');
+    $('#btn-OK').unbind('click');
+    document.getElementById('btn-continue').disabled = false;
+  });
+
+  $('#btn-continue').one('click', function () {
+
+    resetValuesForContinue();
+
+    countContinue++;
+    Coins -= continueFor;
+
+    $('#modalBoxResult').modal('hide');
+    document.getElementById('score').style.visibility = "visible";
+    document.getElementById('coins').style.visibility = "visible";
+    $('#score p').text("Score: " + scoreOneSession);
+    $('#coins p').text("Coins: " + coinsOneSession);
+
+    render();
+    startBarierLogic();
+    start = Date.now();      
+
+    $('#btn-restart').unbind('click');
+    document.getElementById('btn-continue').disabled = false;
   });
 }
 
@@ -133,7 +166,20 @@ function resetValues () {
   COINS = 0;
   COINS_BALANCE = 0;
   COINS_BALANCE_ROAD = 0;
-  coins = [];  
+  coins = [];
+  scoreOneSession = 0;
+  timeOneSession = 0;
+  coinsOneSession = 0;
+  countContinue = 0;
+  $('#btn-continue').unbind('click');
+}
+
+function resetValuesForContinue () {
+  JUMP = false;
+  X_JUMP = 0.25;
+  hero.position.y = 3;
+  COINS = 0;
+  $('#btn-OK').unbind('click');
 }
 
 function onWindowResize () {
@@ -512,8 +558,8 @@ function animateConuses(conus) {
         } 
         else if(element.children.length > PARTS_NUMBER) {
           element.children.pop();
-          COINS++;
-          $('#coins p').text("Coins: " + COINS);
+          coinsOneSession++;
+          $('#coins p').text("Coins: " + coinsOneSession);
         }    
       }
 
@@ -526,8 +572,8 @@ function animateConuses(conus) {
     barier.shift();
   }
 
-  SCORE += SPEED;
-  $('#score p').text("Score: " + Math.floor(SCORE / 100));
+  scoreOneSession += SPEED;
+  $('#score p').text("Score: " + Math.floor(scoreOneSession / 100));
 }
 
 var boxConuses = function (number) {
@@ -637,8 +683,8 @@ function animateCoins(coin) {
   coin.rotation.y -= 0.1;
 
   if((coin.position.z == hero.position.z - 2) && (coin.position.x == hero.position.x) && (hero.position.y <= coin.position.y + 1)) {
-    COINS++;
-    $('#coins p').text("Coins: " + COINS);
+    coinsOneSession++;
+    $('#coins p').text("Coins: " + coinsOneSession);
     scene.remove(coins[0]);
     coins.shift();
   }
