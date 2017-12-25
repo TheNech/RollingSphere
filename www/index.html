@@ -97,7 +97,14 @@
 				<tr><td></td><td></td><td></td></tr>
 				<tr><td></td><td></td><td></td></tr>
 				<tr><td></td><td></td><td></td></tr>
-			</table>		
+			</table>
+
+			<div id="chat">
+				<div class="chatArea">
+					<ul class="messages"></ul>
+				</div>
+				<input class="inputMessage" placeholder="Type here" type="" name="">
+			</div>		
 
 			<div id="btnStartGame">
 				<button type="button" class="btn btn-primary">Play</button>
@@ -105,11 +112,14 @@
 		</div>		
 	</div>
 
+	
+
 	<div id="score"><p>Score: 0</p></div>
 	<div id="coins"><p>Coins: 0</p></div>
 
 	<script type="text/javascript" src="./js/registration.js"></script>
 	<script type="text/javascript" src="./js/authorization.js"></script>
+	<script type="text/javascript" src="./js/chat.js"></script>
 	<script type="text/javascript" src="./js/game.js"></script>
 	<script type="text/javascript" src="./js/socket.js"></script>
 </body>

@@ -1,4 +1,4 @@
-var bestscore, Coins, time;
+var bestscore, Coins, time, nickname;
 
 $("#btnEnter").on('click', (function() {
 
@@ -21,6 +21,7 @@ $("#btnEnter").on('click', (function() {
       return;
     }
 
+
     $('#overlay-start').fadeOut(50);
     $('#mainScreen').fadeIn(50);
     document.getElementById('mainScreenElements').style.visibility = "visible";
@@ -28,6 +29,7 @@ $("#btnEnter").on('click', (function() {
     bestscore = data.bestscore;
     Coins = data.coins;
     time = data.time;
+    nickname = nick;
 
     $('#mainScreenStatistic p:nth-child(1)').text('Nickname: ' + nick);
     $('#mainScreenStatistic p:nth-child(2)').text('Best score: ' + bestscore);
@@ -76,6 +78,9 @@ $("#btnEnter").on('click', (function() {
           $('#btn-continue').removeAttr('title');
       }
     });
+
+    subscribeChat();
+    document.getElementById('container').style.display = 'none';
   });
 }));
 
