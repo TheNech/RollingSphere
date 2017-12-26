@@ -51,11 +51,13 @@ class Server {
         socket.on('auth', (data) => {
             PModel.findOne({username: data.username}, (err, user) => {
                 if (err) {
+                    Messages.sendAuthRes(socket, false, null);
                     logger.error('Error in auth handler! Message: ', err.message);
                 } else if (user && user.checkPassword(data.password)) {
                     logger.info(format('Auth success. User: %s', user.username));
                     this.newPlayer(socket, user);
                 } else {
+                    Messages.sendAuthRes(socket, false, null);
                     logger.info(format('Auth failed. User: %s', data.username));
                 }
             });
